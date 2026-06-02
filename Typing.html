@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="google-site-verification" content="WhGMLJL2YCtv8Ti_i2jnA4GdRP9WrFow7WqVAQDdsLc" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="canonical" href="https://ganeshjadhav612.github.io/Gcc-Tbc-Typing-Test/" />
+    <title>Typing Buddy - 40 Speed Practice</title>
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --success-color: #198754;
+            --danger-color: #dc3545;
+            --bg-color: #ffffff;
+            --text-color: #333333;
+            --border-color: #ced4da;
+            --passage-bg: #ffffff;
+        }
+
+        /* डार्क मोड थीम कलर्स */
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --text-color: #f5f5f5;
+            --border-color: #444444;
+            --passage-bg: #1e1e1e;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 15px;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* टॉप कंट्रोल बार */
+        .controls-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 12px;
+            align-items: flex-end;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .control-group label {
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--text-color);
+        }
+
+        .control-group select {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 13px;
+            outline: none;
+            height: 38px;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .start-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            height: 38px;
+            transition: opacity 0.2s;
+        }
+
+        .start-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* मुख्य प्रॅक्टिस लेआउट */
+        .workspace-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: bold;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        /* वरचा पॅसेज बॉक्स */
+        #text-container {
+            background-color: var(--passage-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 12px;
+            font-size: 18px; 
+            line-height: 1.6;
+            height: 150px;
+            overflow-y: auto;
+            text-align: left; 
+            user-select: none;
+            box-sizing: border-box;
+            white-space: pre-wrap; 
+            word-break: break-word;
+            transition: background-color 0.3s;
+            position: relative;
+        }
+
+        /* वरच्या बॉक्समधील सध्या टाईप करत असलेल्या शब्दाचा हायलाईट आणि रंग */
+        .passage-word {
+            color: var(--text-color);
+            border-radius: 3px;
+        }
+        .passage-word.current-word {
+            background-color: rgba(13, 110, 253, 0.25); 
+            border-bottom: 2px solid var(--primary-color);
+        }
+        .passage-word.passage-correct {
+            color: var(--success-color) !important;
+            font-weight: bold;
+        }
+        .passage-word.passage-incorrect {
+            color: var(--danger-color) !important;
+            text-decoration: underline;
+            text-decoration-color: var(--danger-color);
+            font-weight: bold;
+        }
+
+        /* खालचा टायपिंग आणि डिस्प्ले बॉक्स */
+        .typing-container {
+            position: relative;
+            width: 100%;
+            height: 150px;
+        }
+
+        /* अदृश्य इनपुट बॉक्स आणि प्रत्यक्ष आऊटपुट बॉक्स पूर्णपणे अलाईन राहण्यासाठी सामायिक CSS */
+        #hidden-input, .type-display {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-size: 18px; 
+            line-height: 1.6;
+            padding: 12px;
+            box-sizing: border-box;
+            white-space: pre-wrap; 
+            word-break: break-word;
+        }
+
+        /* अदृश्य इनपुट बॉक्स - १px बॉर्डरसह अचूक अलाईनमेंट दिली आहे */
+        #hidden-input {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0;
+            z-index: 2;
+            cursor: text;
+            resize: none;
+            border: 1px solid transparent; 
+            outline: none;
+            pointer-events: none; 
+        }
+
+        /* दिसणारा बॉक्स जिथे प्लेन टायपिंग आणि कर्सर दिसेल */
+        .type-display {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border-radius: 4px;
+            overflow-y: auto;
+            font-family: inherit;
+        }
+
+        .word-correct { color: var(--text-color); }
+        .word-incorrect { color: var(--text-color); }
+        
+        /* ब्लिंकिंग कर्सर (रेषा) */
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            background-color: var(--primary-color);
+            animation: blink 1s step-end infinite;
+            margin-left: 1px;
+            height: 1.1em;
+            vertical-align: middle;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* EXAM MODE हायलाइटिंग नियंत्रण */
+        .exam-mode-active .passage-word.current-word {
+            background-color: transparent !important;
+            border-bottom: none !important;
+        }
+        .exam-mode-active .passage-correct,
+        .exam-mode-active .passage-incorrect {
+            color: inherit !important;
+            background-color: transparent !important;
+            text-decoration: none !important;
+            font-weight: normal !important;
+        }
+
+        /* आकडेवारीचा विभाग (Stats) */
+        .stats-panel {
+            margin-top: 15px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .stats-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .timer-bubble {
+            background-color: #343a40;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 18px;
+            text-align: center;
+            min-width: 70px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            align-items: start;
+        }
+
+        .blue-stat { color: var(--primary-color); font-weight: bold; font-size: 15px; margin: 2px 0; }
+        .green-stat { color: var(--success-color); font-weight: bold; font-size: 15px; margin: 2px 0; }
+        .red-stat { color: var(--danger-color); font-weight: bold; font-size: 15px; margin: 2px 0; }
+
+        .sub-text { font-size: 11px; color: var(--danger-color); margin-top: 2px; line-height: 1.4; }
+        .bold-text { font-weight: bold; font-size: 16px; color: var(--text-color); margin: 2px 0; }
+
+        .reset-btn {
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: bold;
+            padding: 8px 15px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .reset-btn:active { opacity: 0.8; }
+
+        .signature {
+            text-align: right;
+            font-family: 'Brush Script MT', 'Caveat', 'Great Vibes', cursive;
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--text-color);
+            opacity: 0.75;
+            margin-top: 25px;
+            padding-right: 15px;
+        }
+
+        @media screen and (max-width: 480px) {
+            .controls-row { grid-template-columns: repeat(2, 1fr); }
+            .stats-grid { grid-template-columns: 1fr; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- टॉप कंट्रोल्स बार -->
+        <div class="controls-row">
+            <div class="control-group">
+                <label for="passage-select">Select Passage</label>
+                <select id="passage-select" onchange="loadPassage()">
+                    <option value="0">Passage 1 (Elephant)</option>
+                    <option value="1">Passage 2 (Magic)</option>
+                    <option value="2">Passage 3 (Assam Trip)</option>
+                    <option value="3">Passage 4 (Home)</option>
+                    <option value="4">Passage 5 (Pottery)</option>
+                    <option value="5">Passage 6 (Happiness)</option>
+                    <option value="6">Passage 7 (Travelling / Bus)</option>
+                    <option value="7">Passage 8 (Plants)</option>
+                    <option value="8">Passage 9 (Adventure)</option>
+                    <option value="9">Passage 10 (Airport)</option>
+                    <option value="10">Passage 11 (Ambition)</option>
+                    <option value="11">Passage 12 (Stream)</option>
+                    <option value="12">Passage 13 (Holi)</option>
+                    <option value="13">Passage 14 (Earthquake)</option>
+                    <option value="14">Passage 15 (Macro economics)</option>
+                    <option value="15">Passage 16 (Pride)</option>
+                    <option value="16">Passage 17 (Modern World)</option>
+                    <option value="17">Passage 18 (Achievements)</option>
+                    <option value="18">Passage 19 (Gossip)</option>
+                    <option value="19">Passage 20 (Cinema / Radio)</option>
+                    <option value="20">Passage 21 (Outdoor Games)</option>
+                    <option value="21">Passage 22 (Advertising)</option>
+                    <option value="22">Passage 23 (Joint Family)</option>
+                    <option value="23">Passage 24 (Learning)</option>
+                    <option value="24">Passage 25 (Freedom)</option>
+                    <option value="25">Passage 26 (Transferable Job)</option>
+                    <option value="26">Passage 27 (Inventions)</option>
+                    <option value="27">Passage 28 (Goods / Transport)</option>
+                    <option value="28">Passage 29 (Scientific Films)</option>
+                    <option value="29">Passage 30 (Deserts)</option>
+                    <option value="30">Passage 31 (Good Sleep)</option>
+                    <option value="31">Passage 32 (Seasons)</option>
+                    <option value="32">Passage 33 (Internet Safety)</option>
+                    <option value="33">Passage 34 (Trees)</option>
+                    <option value="34">Passage 35 (Time Management)</option>
+                    <option value="35">Passage 36 (Teachers)</option>
+                    <option value="36">Passage 37 (Exercise)</option>
+                    <option value="37">Passage 38 (Reading Habits)</option>
+                    <option value="38">Passage 39 (Cyber Awareness)</option>
+                    <option value="39">Passage 40 (Child Safety)</option>
+                    <option value="40">Passage 41 (Time Management 2)</option>
+                    <option value="41">Passage 42 (Environmental Protection)</option>
+                    <option value="42">Passage 43 (Reading Books)</option>
+                    <option value="43">Passage 44 (Sports & Games)</option>
+                    <option value="44">Passage 45 (Technology)</option>
+                    <option value="45">Passage 46 (Teamwork)</option>
+                    <option value="46">Passage 47 (Tourism)</option>
+                    <option value="47">Passage 48 (Water Conservation)</option>
+                    <option value="48">Passage 49 (Agriculture)</option>
+                    <option value="49">Passage 50 (Saving Money)</option>
+                    <option value="50">Passage 51 (National Parks)</option>
+                    <option value="51">Passage 52 (Tourism 2)</option>
+                    <option value="52">Passage 53 (Communication Skills)</option>
+                    <option value="53">Passage 54 (Technology 2)</option>
+                    <option value="54">Passage 55 (Food Security)</option>
+                    <option value="55">Passage 56 (Transportation)</option>
+                    <option value="56">Passage 57 (Leadership)</option>
+                    <option value="57">Passage 58 (Rural Development)</option>
+                    <option value="58">Passage 59 (Art and Culture)</option>
+                    <option value="59">Passage 60 (Rudra and the Flute)</option>
+                    <option value="60">Passage 61 (Disaster Management)</option>
+                    <option value="61">Passage 62 (Honesty)</option>
+                    <option value="62">Passage 63 (Environment)</option>
+                    <option value="63">Passage 64 (Kabir and Flight)</option>
+                    <option value="64">Passage 65 (The Shade of Banyan Tree)</option>
+                    <option value="65">Passage 66 (Blue Harbor)</option>
+                    <option value="66">Passage 67 (Mira and Rain)</option>
+                    <option value="67">Passage 68 (Museum of Unwritten Books)</option>
+                    <option value="68">Passage 69 (Value of Books)</option>
+                    <option value="69">Passage 70 (Time Management 3)</option>
+                    <option value="70">Passage 71 (Nature)</option>
+                    <option value="71">Passage 72 (Health)</option>
+                    <option value="72">Passage 73 (Ishaan and Computers)</option>
+                    <option value="73">Passage 74 (Karan the Taxi Driver)</option>
+                    <option value="74">Passage 75 (Sita the School Teacher)</option>
+                    <option value="75">Passage 76 (Arjun the Shopkeeper)</option>
+                    <option value="76">Passage 77 (Meena the Farmer)</option>
+                    <option value="77">Passage 78 (Rohan's Journey)</option>
+                    <option value="78">Passage 79 (Healthy Food)</option>
+                    <option value="79">Passage 80 (The Ghost Train)</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="exam-select">Exam Mode</label>
+                <select id="exam-select" onchange="toggleExamMode()">
+                    <option value="Off">Off</option>
+                    <option value="On">On</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="timer-select">Set Timer</label>
+                <select id="timer-select" onchange="resetTest()">
+                    <option value="No Time">No Time</option>
+                    <option value="60">1 Min</option>
+                    <option value="120">2 Min</option>
+                    <option value="300">5 Min</option>
+                    <option value="420">7 Min</option> 
+                    <option value="600">10 Min</option> 
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="font-select">Font Size</label>
+                <select id="font-select" onchange="changeFontSize()">
+                    <option value="14px">14px</option>
+                    <option value="18px" selected>18px</option>
+                    <option value="19px">19px</option> 
+                    <option value="20px">20px</option> 
+                    <option value="22px">22px</option>
+                    <option value="26px">26px</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="backspace-select">Backspace</label>
+                <select id="backspace-select">
+                    <option value="On">On</option>
+                    <option value="Off">Off</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="theme-select">Theme</label>
+                <select id="theme-select" onchange="toggleTheme()">
+                    <option value="Light">Light</option>
+                    <option value="Dark">Dark</option>
+                </select>
+            </div>
+            <button class="start-btn" id="start-btn" onclick="startTest()">Start</button>
+        </div>
+
+        <div class="workspace-layout">
+            <h4 class="section-title">Speed Practice Question</h4>
+            <div id="text-container">Loading passage...</div>
+
+            <h4 class="section-title">Speed Practice Answer</h4>
+            <div class="typing-container">
+                <textarea id="hidden-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" disabled></textarea>
+                <div id="type-display" class="type-display"><span style="color: #888;">Start typing here...</span></div>
+            </div>
+
+            <div class="stats-panel">
+                <div class="stats-header-row">
+                    <div class="timer-bubble" id="stat-time">00:00</div>
+                    <button class="reset-btn" onclick="resetTest()">Reset Test</button>
+                </div>
+
+                <div class="stats-grid">
+                    <div>
+                        <div class="blue-stat">Keystrokes Count: <span id="stat-keystrokes">0</span></div>
+                        <div class="blue-stat">Backspace Count: <span id="stat-backspace">0</span></div>
+                        <div class="blue-stat">Keystrokes per Min: <span id="stat-kpm">0</span></div>
+                        <div class="blue-stat">Words per Min: <span id="stat-wpm">0</span></div>
+                    </div>
+                    <div>
+                        <div class="green-stat">Right Words: <span id="stat-right">0</span></div>
+                        <div class="red-stat">
+                            Wrong Words: <span id="stat-wrong">0</span>
+                            <div class="sub-text">(Wrong Words + Missed Words + Extra Words + Extra Space)</div>
+                        </div>
+                        <div class="bold-text" style="margin-top: 10px;">Accuracy: <span id="stat-accuracy">0%</span></div>
+                    </div>
+                </div>
+                <div class="signature">Created by Ganesh Jadhav</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const passages = [
+            "Although the king of the forest dominates every animal the mighty elephant holds his own place among the animals that are feared and are never provoked. Elephants are normally found deep in the heart of the forest and remain with their herd most of the time. This species has been hunted by man mainly because of its ivory tusks that are sold and exported for enormous sums of money. Poachers hunt the poor elephants, leaving them to die after the tusks have been removed. Elephants are known to have remarkable memories and it is rightly said that an elephant never forgets. They have remained faithful friends of man helping and serving him when taken captive. Elephants are made to perform in circuses, carry loads, logs and are used for hunting as well. The elephant was the chosen one for marriages of royalty when Maharajas ruled, and they were dressed in all the finery fit for a royal wedding. They were kept only for the rulers, to survey the land, and were important parts of all state processions. During battles, it was the elephant who would lead the armies and history unfolds so many stories of the elephant’s loyalty and bravery. The government has taken stern measures in prohibiting the slaughter of these animals.",
+            "Magic is man’s way of trying to make the supernatural forces work for him. Most people believe in magic, one way or the other. Ways of working magic differ, either by chanting actions or ceremonies. In the old Stone Ages, men were intended to give a magical control over animals to increase their numbers. Kings were believed to have supernatural powers in those days, so they were obeyed unquestioned. In some societies, demons are driven out of those possessed, by means of charms and dances. Magic strings are tied around the wrists, neck or body, to ward off evil spirits. When magic is used to harm another person, it is called Black Magic or sorcery. One common way is to make an image of the person, this image is then mutilated. The victim is supposed to feel the pain and if the sorcerer wills it, even die. There are many case of people dying of Black Magic. Magic is also practiced through fortune-telling cards, Ouija boards, and books explaining dreams. In 1692, witches were caught and tortured to death. These witches, who were normal people, were supposed to practice witch craft on people to bring the under their spell. Generally, we assume a picture of a witch as a lady in black with a wand, a kind of old woman with a smile.",
+            "The school had reopened after our summer vacations a few weeks back and we had settled down to the monotony of everyday studies when, one morning, a notice was circulated in class. We belong to the tenth standard and had been given the option to go on a trip to Assam. The specific idea was botanical and we had the added advantage of seeing a tea garden and tea production on the spot. Most of us jumped at the idea as we were getting subsidised fair fare charges and accommodation too. It needed just a little bit of cajoling for our parents to agree to the trip. The journey by Brahmaputra Mail was a very memorable one and we enjoyed the trip to the hit. It was while coming back from one of the tea gardens that calamity struck. It had been raining in torrents ever since we reached Guwahati and even our trip to the Kaziranga National Park was in heavy rains. The advantage was that there were several breaks in between when we could clearly see some wild elephants, deer and even a solitary rhino, to turn our efforts fruitful. While returning from Kaziranga we were scheduled to visit the Tata Gardens located midway between the town and the Park. The visit back was eventful as our bus had to cross several small bridges over rivulets enroute.",
+            "You see more and more concrete constructions coming up everyday in cities. In fact, one often wonders if there will eventually come a day when the sky will not be visible, it will all be hidden between the tall, sky scrapers that are almost touching one another. Between these concrete structures us Home, where one looks for security, love understanding and acceptance. Where the doors become a refuge from the harsh world of make believe and competition outside. But is Home really all this? Is it just another place where you reside and live each day till you decide what to do or where to go? No one person makes a Home. It is made up of relationships where every member of the family plays his part, be it grandparents, parents or children. If everyone decides, that in this house we will share and respect each other problems may come but they will be dealt with in such a manner that they will pass sooner than we realise. Love makes the world go round, it is the most powerful tool ever used to melt even the stone hearted. So, ask, yourself, are you doing your best to make your house a home. If you are then, I am sure, the concrete walls do not matter, nor the fact that the house may not be all you desire. If it has love, then it has everything.",
+            "One of man’s earliest achievements was the manufacture of hard pottery, from soft clay. This skill provided him with vessels for cooking and storing food, and carrying water. Ornaments and works of art were also made of pottery. Pots are made by shaping soft clay and then drying it. The clay must be first kneaded and if it is too sticky, animal dung or fine chaff is added. Shaping may be done entirely by hand, or it may be done on a wheel, or even in moulds shaped like the desired pot. Some people coil strips of clay, like sausages, layer upon layer, pressing each coil gently against the one next to it. Porcelain is a kind of pottery which by a special process is turned into something very much like glass. If a pot is to be of much use, it must be fired. Firing is simply baking the pot after it has been dried in the sun. The first fired pottery were made around six thousand five hundred B.C. in Mesopotamia. Probably, the earliest stationery use of the wheel was for shaping pots. In a potter’s wheel, the wheel is mounted on the upright end of an exle set in the ground. A piece of clay is thrown on the centre of the wheel, and as the wheel is turned, the potter shapes the clay with his hands. Although American Indians make excellent pottery.",
+            "Happiness is a difficult term to define. The dictionaries give the meaning of Happy, as fortunate, pleased and contented or blessed. It is a relative term and varies in degrees from individual to individual. It is a feeling of well-being and comes generally from having one’s desires and aspirations fulfilled. Human, as a race, cannot be easily satisfied and is never perfectly happy. The reason being that the satisfaction of one want or the realization of one aim leads to further ambition and it always goes on increasing. If we delve into the sources of happiness, we find that, these are innumerable and tapped properly, a man can derive pleasure and feel happy. Radiant health, wealth, pursuit of knowledge and adventurous sports are the basis of happiness to all in general. There are others who have a philanthropic bent of mind and feel happiness in helping others. Others feel a sense of happiness in the accomplishment of a social, religious or political undertaking. Then there are types of persons who are sadists or evil ones. These are in minority and derive their pleasure, real or imaginary, by hurting others or in evil doings of miscellaneous sorts. Thus a particular feeling does not necessarily make all persons equally happy.",
+            "For short distance travelling, buses are easier to commute by, since long distance travelling by bus can prove very tiring and tedious. Travelling in a bus can prove very tiring. Travelling in a bus is much the same as travelling in a train, with the non availability of certain amenities. The only consolation is that the train is faster and you reach you destination quicker. If you have got your tickets booked through a travel agent, he may get you on a video coach, in which case you may be able to pass your time watching an enjoyable movie. You may get someone interesting setting next to you, who you can speak with. Sometimes you watch an unfinished movie as the bus reaches its destination while the movie still goes on. The one great disadvantage in a bus is the unavailability of a toilet and it is only when the bus stops at places that one can visit a toilet. But travels are cheaper and people sometimes prefer it to travelling by train. If you are going to a hill station, it is common travelling by bus, though the roads are narrow, particularly during the monsoon season. Commuting by bus locally is very convenient and inexpensive. Now a days there are plenty of chartered buses that pick up working people and are not crowded during peak hours.",
+            "Plants have served mankind in various ways from as far back as one can remember. They have fed numerous people and cured diseases since life began on earth. Survival of human beings is dependent on plants. A large portion of food, medicines and materials that we use in our everyday life, is from plants which grow all over the world in the tropics. Apart from feeding and protecting human life, plants also protect soil from erosion, regular climate, maintain water supplies for agriculture and prevent the forming of deserts. Despite the great value of plants, man has been destroying them simply due to his ignorance and short sightedness. According to the records, every year we destroy a tropical rain forest three times the size of Switzerland. About twenty five thousand flowering plants are on the verge of extinction. Some of the flowering plants are water lilies, violets sun flowers, orchids, magnolias, pitcher plants, Indian pipe, mistletoe a plant hung on doors during Christmas, and the Spanish moss. We should take care of our plants and try not to pollute the air so much that plants begin to die. In a nursery all types of plants are available especially so many colourful flowering plants and also seasonal flowering plants.",
+            "Adventure, is a form of modern entertainment which is mainly for the physically fit. Be it any branch of sports, achievements in this field are such that the top performers today are looked up to by lesser mortals who pay to see them perform. Lucky are those persons who have chosen this form of entertainment as their profession. The added advantage is that they get handsomely paid to do what they enjoy doing. Examples of top basket ball players, cricketers, tennis players, golfers and footballers are just few of the streams, where they are highly paid and have become rich. Boxing is another example of entertainment, which pits one man’s powers against another, in beating each other to pulp. The audience gets sadistic pleasure out of watching this brutal sport and pays heavily for the opportunity, thus making the boxers very rich. But there have been several instances of boxers getting brain damaged and maimed for life and even death, resulting out of injuries Thus it is another form of entertainment with serious negative impact. The right forms of entertainment should be those without these negative aspects which have the quality to feel relax and make a person happy.",
+            "After arriving at the airport, it is customary to deposit your baggage at the airline counter. The officer on duty examines your air ticket. In all probability, there will be a queue at the counter, so you will have to wait for your turn patiently. After your tickets have been checked, the baggage is weighed. The standard baggage permitted is twenty kg. per passenger travelling on the economy class and thirty kg. those travelling in the first class on both domestic and international flights. The baggage that is not required during the flight, is checked in, which means that it is kept in the storage compartment of the aircraft and delivered on arrival at the destination. Usually the airlines provide stickers and baggage tags for fixing on to the baggage. We should avoid excess baggage. After checking both tickets and baggage, the counterfoil is returned by the airline staff with a boarding pass. In the case of an international flight, there is a customs, immigration and security check before one actually proceeds towards the aircraft. Now a days, in order to protect passengers and the aircrafts from hijackers and terrorist, strict security measures have been enforced. Before flying , air hostess welcomes all passengers.",
+            "Everybody in this world is living for an aims and purpose. The aim to achieve something is ambition. A life without ambition is worthless. From the beginning, we start thinking what we will become and achieve when we grow up. Each person has his own desires and aims. One can dream of becoming a doctor, engineer, teacher, etc. Since childhood, we try and start making efforts to achieve our ambition. We keep chasing our dreams and desires. This keeps us focused and motivate us to work hard towards achieving the goal. Every human being has an ambition. My ambition in life is to become a teacher. I developed a wish to become a teacher from the beginning of my school days. Teaching is a noble profession and teachers are like mothers to children. They give love and affection to the students. A teacher is the source of knowledge for students. She teaches a lot of values and morals apart from textbook education. To a child, his teacher is an ideal. She plays the role of mother, friend, guide and mentor. A child’s development is largely dependent on good teacher. Therefore, I wish to become a good teacher and contribute in making children better citizens of this country. In this way teacher’s role is very important in the child’s development.",
+            "A stream is a flow of water that deviates from its main source. When the waters of a stream gush, and flow very quickly, particularly near the streams origin, loose sand and soil gets washed between stones. The water that flows from a fast stream contains more oxygen than waters from a slow stream. The stream that flows fast is more likely to have pure water. The temperature of a fast flowing stream is usually low. As a stream progresses. Its current slows down. Little pools appear and rooted plants grow in pebbles and slit deposited at the bottom. Most of these plants are light and easily buoyed by the water. The colour of streams is normally a dull blue unless it mingles with mud and silt. A gushing stream is often a lovely sight particularly in the mountains where streams flow in gay abandon. Many plants like the water weeds, water hyacinths and pondweed grow where streams slow and they provide excellent food for birds and ducks. They grow so thick sometimes, they check the flow of the streams. Canals and tunnels are built for a number of reasons. One of the most important is to provide shortcuts from one place to another. They employ a large number of workers and machines and may take years to complete. But discoveries made easier.",
+            "Who can think of Holi and not associate it with colour, song and dance. It is one of the most enjoyable festivals of North India. On this day, everyone lets themselves go, it is fun and laughter, meeting friends and relatives enjoying oneself thoroughly. Although Holi is a Hindu festival. It is celebrated by everyone regardless of religion and caste. It is held on the full moon day of Phalgun in March or April. It is also known as the Spring Festival for the spring flowers are in bloom everywhere with Holi. In North India, Holi is celebrated with coloured powder thrown or rubbed on each other. The coloured faces all around make friends unrecognisable at times, everyone looks like as though they have on a coloured mask. But Holi is not only festival of colours, there is religious significance as well. It is believed , that Prahlad, the son of Hiranyakashyap, was a great devotee of Lord Vishnu and was asked by his father, who was a demon, to stop worshipping Lord Vishnu. Prahlad refused to do so, and his father got so annoyed with him, that he ordered his sister whose name was Holika, to sit in a burning pyre and burn Prahlad. Because Prahlad had the protection of Lord Vishnu, nothing happened to him, instead Holika died a painful death.",
+            "The quaking or trembling of the earth is known as an earthquake. There is an old mythological story that believes the earth was supposed to be on the head of a cobra. Whenever the cobra nodded its head, the earth moved. But we all know, that remains a myth and a most improbable story. There are greater scientific explanations why earthquakes stake place. Scientists are of the opinion, that this action takes place because volcanoes and rocks that move within the earth or by the sudden contraction of the earth, compel it to shake. An earthquake is a devastating experience, particularly when the earth tremors are severe. It comes suddenly and lasts for a few seconds, but during that period, it causes fear in the heart of each person. If an earthquake is intense, great damage is caused. Trees, buildings and houses are damaged, causing loss of lives. Animals are normally the first to become restless and try to break free from bondage. Thousands of people get buried alive under collapsing houses and debris. Within seconds, life alters for so many who become homeless. The worst earthquakes have taken place in Italy and Japan. Welfare organisations, the army, police Rescue Teams rush to help in earthquake stricken places reach as fast as they can.",
+            "As a first step towards estimating the Macro economic variables, one may assume a desired level of income to be achieved within a possible range of time. The desired level of income may be based on the goal of providing a minimum level of living for every individual. The time taken to achieve that goal will, however, depend upon the availability of domestic as well as foreign resources. Domestic savings depends upon the loans and aids from foreign countries. The propensity to save depends upon the saving tendencies of the private, corporate and public sectors. The domestic saving may tend to increase depending upon the saving schemes. In the same way, Government can also encourage a higher rate of savings in the corporate and public sectors. The domestic savings schemes. In the same way, Government by allowing different types of tax rebates. Government effort may also encourage a higher rate of savings in the corporate sector by allowing different types of tax towards the increase in their own saving by reducing uneconomic expenditure on current account and by taking measure of increasing taxes. However, any measures of increasing.",
+            "Pride is a trait of human character present in nearly all humans. There could be the rarest of rare exceptions as even ascetics are susceptible to price. Even after renouncing the material world and spending their lives in spiritual advancement, they are proud of this achievement. Pride as an element is not bad, as it is also an expression of self-esteem, without which we may not be able to progress to higher levels, in whatever fields we are pursuing. A student, after he gets his examination result, is proud to see the fruits of his labour over the academic year. He also realises the extent to which he must work harder or concentrate more on any specific subject, to get better results. But if he is not proud of his efforts, due to poor marks, he falls in his self-esteem, which discourages him and leads to disastrous results, unless restored. He is psychologically affected and may even need specialised treatment. A mother is proud of her children when they bring glory to the family and it is a natural feeling in her. This leads to her paying more attention to their needs which may be physical or psychological. She is proud when her friends, relatives and neighbours praise her efforts, due to which children have been successful.",
+            "The modern world belongs to the twentieth century on the verge of entering the next millennium. It is also to be noted that our world has advanced in science, technology and utilization of resources by leaps and bounds. However the modern world and its inhabitants have also resorted to indiscriminate tampering of resources, leading to depletion. Of late the intelligentsia has woken up to this negative aspect and several forums have been formed like Green Peace. These comprise of dedicated individuals who advocate non-pollution of environment, above and below the surface of the earth. They are also responsible for the general awareness about preservation. Adventure, on the other hand, is a definition which varies from person to person. It is in actuality defined as a risky undertaking of unknown outcome which means that an adventurer is one who gets a thrill out of exploits, the result of which may also be dangerous or if in favor, then sublime. After the above we can consider the options individuals have for adventure, in the modern world, to suit their tastes. To start of with, we can consider sports and its varied disciplines, which are adventurous for sportsmen. Ballooning is a sport which has a lot of scope.",
+            "Achievements in life are very rarely a fluke, generally it is the culmination of years of devoted labour. There are many who have the good fortune of being able to decide early in life their goal because of an affluent family, helpful guidance from parents and teachers or because they are blessed with the intellect to do so. There are others who are products of the schools of life only. They have never had the opportunity to go in for formal education, mostly due to poverty and sometimes due to an indifferent family background. They somehow meander through life and pass away unsung. There are a very few amongst this latter group who have the determination and will-power to achieve what they want and are successful in their endeavours. I have been privileged to know a person with the calibre and courage to bravely face his heritage and turn it around to make a name for himself. His name is Prem Kushwaha. Prem’s parents were illiterate, his mother was our maid servant and she spent her life sweeping our rooms and cleaning our utensils. His father was a rikshaw puller who squandered away his money drinking country liquor and regularly beat up his mother. My first memories of Prem are of a small child wearing tattered clothes.",
+            "Most of us enjoy gossiping. There are people who spend a major part of their day talking about others. Idle gossip is perhaps the most futile and harmful occupation one can pick as a means of communicating. It stems from a deep inferiority complex where the gossipmonger feels he or she has pulled down someone else and brought their own self esteem up. Gossiping has everlasting effects. It can harm a person’s reputation to such an extent that the damage can never be un done. Therefore, we should think before maligning another, always keeping in mind the fact that we too could be victims of idle gossip one day. Gossip should be ignored and those who participate in it should be told gently, yet firmly, that there are better ways of occupying oneself. Such people should be avoided as loose-talk becomes a habit which is hard to overcome. Lack of occupation is one of the major causes of this habit, coupled with jealousy that makes us give in to the green eyed monster for that is the name given to a jealous person. At last, we should think about how do some people spend a major part of their day by gossiping? Is gossiping is a good habit? What does a gossipmonger feel? Who do you think gossips to a greater extent men or women or childrens?",
+            "Cinema is a medium of entertainment, through feature films. This may be based on mythology, our great epics, stories written by famous authors, biographies of great leaders or incidents which have led to a change in our world or social structure. Cinema has been very helpful in lucidly narrating the events of the World Wars. This has enabled us to gather knowledge of the disasters of war and the holocausts, like the dropping of nuclear bombs on Hiroshima and Nagasaki. The recent war that took place between U.S.A. and Vietnam is also there for us to see and experience. The terrifying misery of these wars come live in the cinema halls or, cautioning the younger generations of the consequences. There are the negative aspects of these mediums too, like the violence depicted in feature films, which are confused with bravery by the viewers. This in a manner where the less intelligent viewer feels that these have become acceptable in our society. This is not true but it is one of the negative impacts of modern entertainment. Radio is also another form of modern entertainment, with its F.M. bands broadcasting music, and transmission as if it were being heard live. This advancement has led to a level of clarity, which is pleasant to the ears.",
+            "The value of outdoor games are varied and many. They be in the formation of character, creation of team spirit, the power of organization, self-sacrifice and self respect. The formation of characteristics like sportsmanship lead to a very healthy viewpoint of life where a person learns to take the wins and losses in the same spirit. Team spirit leads to the trait of bonhomie and a person learns to palay for the benefit of the team. In a broader perspective he becomes a better person, who is not selfish and thinks about the society and his country as a whole. The quality of organization leads to better management qualities and hones his abilities as a manager, be that for his home, his career of even his country. The quality of self sacrifice and his self respect makes him a better husband, a better father and raises his status socially. All these combined together raises the level of his thinking. In our country outdoor games and sports suitable to Indian conditions, its extreme climates requiring considerable restraint during the hot sultry noon time, should be indulged in. What should be specially noted is that our educational institutions should not neglect indigenous games they should lay stress to choose whatever game they are inclined to.",
+            "Advertising is a method of attracting customers through publicity, in the media or any other form. Publicity of the superiority of one’s products or services over competitors is what is basically called advertising. It is the modern idea of increasing one’s business volumes, for existing products or introducing new products to the consumers. With increased competition in business, due to a large range of products of the same type available, advertising is resorted to enhance salability. Thus the manufacturer, through this mode, is able to publicize to the consumers the superiority, durability, economy and efficacy of his products. The extent of competition has led to the negative aspect too where direct comparisons are made and the competitor’s products are degraded. Today’s consumers are far more knowledgeable and intelligent than earlier days, due to this publicity blitz and not likely to be easily duped. Thus advertising has led the consumer to become more selective and specifically aware of what they need to buy. The power of advertising may be clearly highlighted by the number of Finance Companies which have duped their depositors of crores of rupees. Now a days it is very easy way of knowing different types of advertisements.",
+            "The other aspect of traditional joint family is that strength lies in numbers. Even if a family member is ill or goes out of station to work, he has the mental confidence of his family being looked after and being safe, the prime factor today. Religious activities are lavish household affairs with everyone contributing their mite. These traditional activities result in persons learning about their heritage, religion and other spiritualities in the company of seniors. There are several rituals in any such religious functions which is difficult to understand in the right perspective and the present generation, moving away from tradition, try to be sarcastic about them. However if tried to understand logically and learning from experience, we discover the nuances which are thoroughly scientific and meant for purification of the body and soul. Our marriages, which are generally arranged by elders, are mostly settled on the basis of horoscopes. This is our tradition, but the logic is that people the world over believe that it is a life long union. The percentage of separation and divorce is thus comparatively reduced. In India tradition has always been to welcome different streams of thought which we see so many religions intermingling.",
+            "One of the quickest and best ways of learning and retaining what you learn is through seeing and stamping it forever in our memories. Long after our books have lost their value or influence in our lives. Our memories of a particular thing linger on. As you teach by doing so you learn by seeing. You could travel anywhere, to historical or religious places, mountains, seaside resorts, anywhere in the world it would still be educative and enjoyable for there is always something to imbibe, to learn, to give and to remember. Even educational institutions have realized the power of visual concepts and nearly every educational academy takes their students on excursions and trips to various places. Apart from learning academically, knowledge is acquired from the great book of life on meeting people, living together, sharing of different ideas and cultures. Our country has so much to offer apart from religion and culture, food and social norms, the colours and scenic beauty has so many faces to it. Take the desert of Rajasthan, the lush greenery of fields of crops in Haryana, the backwaters of Kerala, the natural beauty of countless places, from whom there are lessons and lessons to learn that no book can teach us. Preparing for a journey is time consuming.",
+            "Man is born free however circumstances around him have some control over him. These controls are accepted by individuals for protection to fulfil other needs. We have seen that man started staying in groups to get protection from other animals and Nature. We have seen that humans have psychological needs and to fulfil those, they need society. Individuals accept social demands because they get protection and company of others. It proves once again that to get something, one has to give something. These social demands become tolerable if accepted willingly but become unbearable when imposed and the person starts feeling miserable. In India and abroad, many patriots have sacrificed their lives for Freedom. People protested in a novel way during emergency. When it was imposed in India, a few people tied a piece of cloth on their mouth whereas some editors kept their editorial spaces blank as a protest. The value of freedom is given a prime place in our Constitution and its different types are also explained, for e.g. Freedom of Thought. Every citizen of this country is free to think according to his own logical sense and also has the freedom of expression. Taking into cognizance the religious diversity in our country, citizens have been given the freedom.",
+            "My father worked in a transferable job. We, that is, mother and me, never stayed in one place for long, as father’s tenure in one place was only for a period of two years. Mother often complained that these transfers were affecting my education adversely. But despite its disadvantages, we kept moving house. This time, my father was posted to a hill station and the mere thought of being amidst the tranquil mountains, was enough to dispel any objections. We had to pack all our belongings in great haste and though we had packers to lend a professional hand, the bulk of responsibility fell on mother, as usual, for she was the lady of the house. Father was too pre-occupied with work to participate in the packing. I could not help but admire mother’s competence, her self assured manner, and her complete control over everything. With mixed feelings of joy and sadness, we reached our destination. The house was a dream, lying elegantly between all pine trees that seemed to whisper in the breeze. But, the nicest thing about the house was the garden. Mother had already planned where she would plant seasonal flowers and together, we decided a date on which action would begin. Since digging the ground, was hard labour, we asked one of the local men to help us.",
+            "Necessity is the mother of invention. Man has been able to invent various things in science and technology for a better and comfortable life. The new developments, research, inventions and discoveries are on going process. Science and technology go hand in hand, and have changed the face of the earth with its great inventions and discoveries. Science has benefited mankind in a unique manner by its wonderful progress and development. Technology compliments science by its advancements. We are now completely dependent on both. So, now we are blessed to live in the age of science and technology. Science touches us and our life at every step, as a blessing. The discovery of electricity has revolutionized our life. Today, everything from lights, fans, television etc. are all related to science. Now, it is difficult to imagine and believe how people lived in early times without electricity and other inventions. This is the space age. The world has now become smaller due to very fast, hi-tech and reliable means of travel. Science has also helped man to reach the moon and to explore the outer space. Jet planes, metro trains, waterways have enable us to travel from one place to another in shortest period. The world seems to be free of boundaries.",
+            "Goods produced elsewhere, like vegetables and fruits not grown locally, is made available through this reliable mode of transport. Because the freight charges are very reasonable therefore the cost factor added to these produce for transport do not increase the cost beyond reasonable limits. The same may be considered for the produce grown locally. This economical transport system enables the local growers to get adequate returns for their efforts from extended markets. We must also consider the fact that due to its regular services the Railways play an important part in making available the products, even in places which are arid where railway station is the unloading point. This fact is also applicable for the manufactured goods at huge costs at different places in the country. The goods are available even at the furthest point and remote sections due to this huge communication network. Communication is not limited to transport of goods only. The system carries the post regularly and it is a vital cog in the network of the Posts and Telegraph infrastructure of the country. Post cards and letters sent to even, out of the way rural area are made available through the Railway Stations. The trains drop the posts at the nearest station.",
+            "Scientific films are assets to lecturers, on these subjects, as with their help they can very lucidly explain, to even an audience of not very learned persons, knotty topics appertaining to science. Many Universities today have well stocked libraries of such films for teaching students or for public lectures of a popular nature. Thus cinema has become an aid to education and as it is being presently widely appreciated in India, has been of great advantage to the learners. The negative aspect of cinema is, the quality of feature films being shown on Television and Cinema Halls all over the country. The majority of the viewers belong to the poor and middle class and are misled by the affluency shown in our feature films. The lavish life styles, lead to a craving in them to get rich quick and the villains become characters to be copied, who flout the laws of the land with impunity and earn pots of money. These become ideals for our misguided youth who take to a life of criminalization. Thus all the positive aspects are sometimes diluted to quite an extent, by these negative ones and affects our modern life. All said and done, Cinema is a very strong media helpful for the upliftment of society and imparting knowledge essential for the viewers.",
+            "Deserts are areas where the yearly rainfall is less than ten inches. Large areas of desert land have rich soil of mineral nutrients, but they cannot be used by most plants after rare rainfalls. Other areas in deserts are covered with alkaline soil with high salt content which prevents plants from growing. People live in deserts in places called Oases. These are fertile places where water is available for plants to grow and provide food for animals. Some oases are formed or improved by deep wells that bring water from below the ground to the surface for irrigation. Oases produce fruit, sugar, cotton, dates, and crops. All deserts are dry and the evaporation of water exceeds the rainfall. The skies are normally clear and cloudless. During the day it is hot and the nights are cool. Many plants that grow in the deserts have short life cycles, growing quickly when it rains, flowering and producing seeds in a short span of time. Such seeds are able to remain dormant for a long time. Other plants survive by storing moisture in their roots, and Cactus grows most in deserts, stores moisture in its fleshy stem. Some plants have roots which go down into the ground for fifty feet while looking for water. Most animals in deserts get active at night only.",
+            "Good sleep is important for every student because it helps the body and mind rest after a long day. When students sleep well, they wake up fresh and ready to learn new things. Doctors say that school-aged children should sleep at least eight to nine hours every night. Sleep helps improve memory, concentration, and problem-solving skills. Without enough sleep, students may feel tired, stressed, or unable to focus in class. A regular sleep routine makes a big difference. Students should try to sleep and wake up at the same time every day, even on weekends. Mobile phones, televisions, and loud music can disturb sleep, so it is better to turn them off at least one hour before bedtime. Reading a simple book, listening to soft music, or talking with family can help the mind relax. A clean and quiet room also helps students fall asleep faster. Drinking too many soft drinks or eating heavy meals late at night can make sleep uncomfortable. Instead, students can drink warm milk or water. Good sleep supports physical growth and strengthens the immune system, making students healthier. When students sleep well, they perform better in school, feel happier, and have more energy to play, study, and enjoy each day.",
+            "Seasons are an important part of nature. Most places have four main seasons: summer, winter, spring, and autumn. Each season brings different weather, and these changes affect plants, animals, and people. In summer, days are longer and temperatures are higher. People wear light clothes and enjoy cold drinks. Farmers grow crops that need strong sunlight. In winter, temperatures drop, and some places receive snow. People wear warm clothing, and some animals hibernate to save energy. Spring is the season of new beginnings. Flowers bloom, trees grow new leaves, and birds return from migration. It is a good time for planting seeds. Autumn, also called fall, is when leaves turn red, yellow, and orange before falling from trees. Farmers harvest crops, and many festivals are celebrated during this time. Seasons also affect health and daily schedules. In hot weather, drinking water is important to avoid dehydration. In cold weather, warm food and proper clothing help the body stay healthy. Students may study different topics depending on seasons, such as the water cycle or climate. Seasons make the world interesting. They teach us that change is natural and necessary. By understanding seasons, students learn to respect nature and enjoy every part of the year.",
+            "The internet is one of the most useful tools for students today. It helps with homework, projects, and learning new skills. Students can watch educational videos, read articles, and join online classes. However, using the internet without care can be risky, so students must follow safe internet rules. Personal information such as address, phone number, and school details should not be shared with strangers online. Students should never click unknown links because they might contain harmful software. Cyberbullying is another problem. If someone sends hurtful messages or spreads lies online, students should not respond. Instead, they should tell a parent or teacher. Posting photos and comments should also be done carefully. Once something is posted online, it can stay there for a long time, even if deleted later. Students should respect others and use polite language on the internet. Strong passwords are important for protecting accounts. A good password includes letters, numbers, and symbols. Students should log out after using shared computers. Taking breaks from screens helps prevent eye strain and improves focus. The internet becomes a safe learning place when students use it responsibly. When used correctly, it helps students grow in knowledge and prepares them for future careers. Safety and learning should always go together online.",
+            "Trees are an essential part of our environment. They give us oxygen, which is necessary for breathing. Without trees, life on Earth would not be possible. Trees keep the air clean by absorbing carbon dioxide and reducing pollution. They also provide shade and keep temperatures cooler, especially in crowded cities. Birds, insects, and many animals live in trees, so cutting trees destroys their homes. Trees help prevent soil erosion. Their roots hold the soil together, especially during heavy rain. Trees are also important for the water cycle because they release moisture into the air and bring rainfall. Fruits, wood, medicines, and paper come from trees, making them useful in daily life. Students can help protect trees by planting new ones at school, at home, or in their community. Watering plants, using less paper, and supporting eco-friendly products are simple steps that make a difference. Governments and environmental groups work to protect forests by creating laws against illegal cutting. Protecting trees means protecting our future. When students understand the value of trees, they become responsible caretakers of nature. A world with more trees is healthier, cooler, and more beautiful for everyone. Trees are not just plants; they are life-givers.",
+            "Time management means using time wisely to finish work on time. Many students feel stressed because they try to study, play, and complete homework without a plan. When students learn to manage time, they can balance schoolwork and personal activities more easily. Good time management helps students avoid rushing at the last minute and improves the quality of their work. A simple timetable can make a big difference. Students can divide their day into small parts for reading, writing, playing, resting, and helping at home. Giving more time to difficult subjects and taking short breaks keeps the mind fresh. Completing homework on the same day prevents pressure during exams. Students can also set goals, such as learning five new words daily or solving ten math problems before dinner. Parents and teachers can support students by reminding them to follow schedules and avoid wasting time on mobile phones or television. Time should also be given to sleep and exercise because a healthy body improves concentration. On weekends, students can review what they learned and prepare for the next week. Time is a resource that cannot be returned once it is gone. Students who use time wisely become responsible and successful in their studies and future careers. Time management is an important skill for life, not only school.",
+            "Teachers play an important role in shaping the future of students. They do much more than teach subjects like math, science, or language. Teachers help students develop confidence, good habits, and positive thinking. A good teacher understands that every student learns differently. Some learn by reading, some by listening, and some by doing activities. Teachers try to reach every student with patience and care. Teachers also guide students during difficult times. When students feel worried about exams or personal problems, teachers can motivate them and offer useful advice. A kind teacher can change a student's life by believing in them. Teachers encourage students to ask questions, explore new ideas, and learn from mistakes. They do not only prepare students for tests, but also for real-life challenges. Parents and teachers must work together to support students. Schools can organize meetings to discuss progress and find solutions for learning problems. Students should respect teachers and listen carefully in class. Saying \"thank you\" or greeting teachers politely shows respect. Teachers help build strong societies by teaching values such as honesty, responsibility, and teamwork. Their work continues even outside the classroom. A great teacher leaves a positive mark that stays with a student forever.",
+            "Exercise is important for keeping the body strong and healthy. Many students spend long hours sitting in class or studying at home. Without physical activity, the body becomes tired, and students may lose energy. Regular exercise improves blood circulation and helps the heart work better. It also strengthens muscles and bones, which is important as students grow. Exercise supports mental health by reducing stress and making the brain active. There are many types of exercise students can do. They can run, walk, skip rope, stretch, dance, or play outdoor games. Sports like football, basketball, badminton, and swimming help students stay fit and learn teamwork skills. Morning exercise helps students stay fresh during school hours. It improves concentration and memory, making learning easier. Students who exercise regularly often sleep better and feel more confident. Schools can support exercise by offering sports periods, yoga classes, and playground activities. Parents can also take children to parks and encourage them to spend time outside instead of using mobile phones for long periods. Exercise does not require expensive equipment. Simple activities for 30 minutes a day are enough for a healthy body and mind. Exercise helps students stay active, positive, and ready to achieve their goals. A healthy body supports a healthy mind, and both are important for a successful future.",
+            "Reading is one of the best habits a student can develop. It helps the mind grow and improves the ability to understand new ideas. When students read every day, they learn new words and become better at expressing their thoughts. Reading also improves spelling and grammar, which is helpful in writing assignments, essays, and exams. Books allow students to explore different places, cultures, and historical events without leaving their homes. Stories help students imagine new worlds and encourage creative thinking. Reading is also good for mental health. It reduces stress and helps the brain relax after a busy day. Many students feel calm when they read before sleeping. Reading is better than spending too much time on phones or television, because it keeps the mind active instead of passive. Students can choose different types of books such as storybooks, science books, biographies, and books about nature. Schools can support reading habits by creating small libraries and giving students time to read silently. Parents can also encourage children by reading with them and talking about favorite stories. Even 20 minutes of reading every day can make a big difference in learning. Reading opens doors to knowledge and helps students become confident, responsible, and successful in life.",
+            "Cyber awareness is important in the digital world. People use the internet for work. They use it for study. They use it for shopping and payments. Online services save time. But online risks are increasing. Hackers steal information. Scammers cheat people. Viruses damage computers. Cyber awareness protects users. Strong passwords protect accounts. Two-step verification adds safety. People should not click unknown links. They should avoid fake apps. They should update software. Children use the internet too. Parents should guide them. They should check privacy settings. They should limit screen time. Social media needs care. People should think before posting. They should respect others. Cyberbullying hurts feelings. It creates fear. It affects mental health. Reporting tools help users. Law enforcement supports safety. Companies protect user data. Schools should teach cyber safety. Digital literacy builds confidence. Online banking needs caution. People should check addresses. Safe networks protect transactions. Public Wi-Fi is risky. Cyber awareness reduces fraud. It protects money. It protects identity. It protects families. People should back up data. They should use security software. They should learn new threats. Cyber awareness is a regular habit. The internet becomes safer when everyone is responsible. A secure digital world supports growth, trust, and progress.",
+            "Child safety is important for every family. Children need care. They need protection. They need guidance. Parents should teach safety rules. Children should not talk to strangers. They should avoid unsafe places. They should follow traffic rules. Seat belts protect children in vehicles. Helmets protect them while cycling. Schools should teach safety lessons. Teachers should guide students in emergencies. Safe classrooms help learning. Clean surroundings prevent illness. Playgrounds should be safe. Internet safety is also important. Children use phones and computers. They should not share personal information. They should avoid harmful websites. Parents should check screen time. They should enable privacy settings. Cyberbullying harms children. It causes stress. It affects studies. Families should support children. They should listen to their problems. Health safety matters too. Children should wash hands. They should drink clean water. They should eat healthy food. Regular checkups protect health. Communities should spread awareness. Neighbors should care for one another. Police help maintain safety. Child safety laws protect rights. Emergency numbers should be known. Children should learn self-defense. Safety builds confidence. Safe children grow into strong adults. They become responsible citizens. Child safety is a shared duty. Parents, teachers, and society must work together to keep every child safe, healthy, and happy.",            "Time management is a key factor in achieving success. Every individual has the same twenty-four hours in a day, but how that time is utilized makes a significant difference. Proper time management helps reduce stress, increases productivity, and creates a healthy balance between work and personal life. Students who manage their time efficiently can balance studies, sports, and relaxation without feeling overwhelmed. The first step in managing time is setting clear, realistic goals. Creating a daily schedule or a to-do list helps prioritize tasks. It is important to separate urgent tasks from important ones. Avoiding procrastination is essential, as delaying work only increases pressure later. Breaking large projects into smaller, manageable steps makes them easier to complete. Taking short, planned breaks during work keeps the mind fresh and focused. Saying no to unnecessary distractions, like excessive social media use, saves valuable hours. Good time management also ensures sufficient sleep, which is vital for physical and mental health. People who respect time are respected by society. In the professional world, completing assignments on time builds trust and reliability. Ultimately, time is a limited resource that cannot be recovered. Learning to manage it effectively is a lifelong skill that leads to progress, peace of mind, and a more fulfilling journey toward achieving one's dreams.",
+            "Environmental protection is the responsibility of every human being. The earth provides us with clean air, fresh water, fertile soil, and varied resources, but human activities are causing deep damage to nature. Pollution of air, water, and land is rising rapidly. Forests are being cut down for cities and factories, which destroys the natural homes of many birds and animals. Climate change and rising temperatures are global threats that affect food production and weather patterns everywhere. To protect our planet, we must adopt sustainable habits in our daily lives. Reducing the use of plastic is a major step, as plastic takes hundreds of years to break down and harms oceans and wildlife. We should practice the concept of reduce, reuse, and recycle to minimize waste. Conserving water by fixing leaks and turning off taps prevents scarcity. Saving electricity by using energy-efficient bulbs and switching off appliances when not needed reduces the burden on natural resources. Planting more trees helps clean the air and maintain global cooling. Walking, cycling, or using public transport instead of personal cars lowers air pollution. Schools and communities should educate young children about nature conservation. Protecting the environment is not a choice; it is necessary for the survival of future generations.",
+            "Reading books is one of the best habits a person can develop. It opens the doors to a world of knowledge, imagination, and wisdom. Whether it is fiction, history, science, or biographies, reading expands our vocabulary and improves our language skills. It stimulates the brain, keeps the mind active, and sharpens analytical thinking. Regular reading increases focus and concentration, which is highly beneficial for students. It also acts as a great stress reliever after a long, tiring day. Books introduce us to different cultures, perspectives, and ideas from around the world. Reading about the struggles and triumphs of great leaders inspires us to face challenges with courage and patience. Unlike digital screens, reading physical books or standard e-readers before bed promotes better sleep quality. Libraries are treasure houses of information that offer quiet spaces for study and personal growth. Parents should encourage children to read storybooks from an early age to build curiosity. Making a habit of reading just a few pages every day can transform a person's outlook on life. In a world dominated by short digital content and short attention spans, deep reading helps maintain a balanced and thoughtful mind. A book is truly a constant companion that never demands anything but always gives valuable lessons in return.",
+            "Sports and physical games are highly essential for the holistic development of an individual. Regular participation in sports keeps the body fit, active, and free from chronic diseases. It strengthens muscles, improves blood circulation, and enhances overall immunity. Beyond physical health, sports play a major role in building mental strength and emotional stability. Playing games reduces stress, anxiety, and depression by releasing positive hormones in the body. It teaches us how to handle both victory and defeat with a balanced mindset. Sports teach valuable life skills that cannot be learned in a classroom alone. Discipline, time management, and dedication are required to excel in any game. Team sports like football, cricket, and basketball teach cooperation, trust, and the importance of working together toward a common goal. Leadership skills are naturally developed when players guide and support each other on the field. Following rules and respecting the referee’s decision builds a strong sense of fair play and honesty. Schools should make sports a compulsory part of the curriculum to ensure children do not become sedentary. Government support in providing modern playgrounds and training facilities helps young talent shine at international levels. Engaging in sports builds a healthy character, a vibrant spirit, and a united community.",
+            "Technology has transformed the way human beings live, work, and communicate. In the modern world, digital tools have made information accessible to anyone with an internet connection. Education has expanded beyond classrooms through online courses, virtual tutorials, and digital libraries. Healthcare has improved significantly with advanced medical devices, telemedicine, and automated diagnostic tools that save lives daily. In business, technology automates repetitive tasks, increases accuracy, and connects markets across global boundaries instantly. However, the rapid rise of technology also brings notable challenges that need careful management. Excessive use of smartphones and computers can lead to physical issues like eye strain, poor posture, and lack of sleep. Social media, while connecting people across distances, can sometimes create isolation and reduce real-life interactions. Data privacy and cybercrimes are growing security concerns for individuals, businesses, and governments alike. Automation also changes the job market, requiring workers to continuously learn new digital skills to remain relevant. Therefore, using technology with balance and responsibility is essential. It should be used as a powerful tool to enhance human capability, not as a replacement for human relationship and critical thinking. Embracing digital progress while maintaining a healthy lifestyle is the key to a balanced future.",
+            "Teamwork is the collaborative effort of a group to achieve a common goal or complete a task in the most effective and efficient way. In every aspect of life, whether in school projects, corporate offices, or community services, working together produces better results than working in isolation. When individuals form a team, they bring diverse skills, unique ideas, and different perspectives together. This diversity fosters creativity and leads to innovative solutions for complex problems. A successful team relies on open communication, mutual respect, and trust among its members. Tasks are divided based on individual strengths, which increases productivity and ensures high-quality outcomes. Working in a team also divides the stress and workload, making large projects feel less burdensome. When a member faces difficulty, others provide support and guidance, creating a safe learning environment. Teamwork teaches patience, compromise, and the art of listening to others' viewpoints. Conflict management is an important skill learned during group work, as members learn to resolve disagreements respectfully. Celebrating shared success builds a strong sense of belonging and boosts morale. No individual can achieve everything alone, but a united team can overcome major challenges and turn ambitious visions into reality.",
+            "Tourism plays a vital role in the growth and development of a country’s economy and cultural understanding. When people travel to different places, they explore diverse traditions, historical monuments, local cuisines, and natural landscapes. This exposure helps break down stereotypes and fosters mutual respect among communities. Tourism creates direct and indirect employment opportunities for millions of people, including tour guides, hotel staff, transport drivers, and local artisans. It boosts local businesses and supports regional art and crafts. Historical tourism helps preserve heritage sites, as government revenues are often directed toward maintaining old forts, temples, and museums. Ecotourism encourages the protection of natural environments, such as wildlife sanctuaries, forests, and beaches, by promoting responsible travel habits. Medical tourism and adventure sports tourism are also growing rapidly, attracting global visitors to specialized hubs. However, unmanaged tourism can lead to challenges like overcrowding, pollution, and damage to fragile ecosystems. Therefore, practicing sustainable tourism is necessary. Travelers should respect local rules, avoid littering, and support small businesses during their visits. Tourism is not just about visiting new destinations; it is an enriching experience that broadens our horizons and connects humanity across geographic boundaries.",
+            "Water is the most precious natural resource on earth, essential for the survival of all living beings. From drinking and cooking to washing and agriculture, water supports our daily existence and economic activities. Plants need water to grow and produce food, while ecosystems rely on it to maintain climatic balance. Although a large part of the earth is covered with water, only a small percentage is fresh water suitable for human consumption. With a growing global population and industrial expansion, water scarcity is becoming a critical issue. Rainwater harvesting is an effective method to conserve water by collecting and storing rain for future use. Recycling wastewater in industries and using modern irrigation techniques like drip irrigation in agriculture reduce water waste. In our households, simple actions like closing running taps, using buckets instead of showers, and repairing leaks quickly can save thousands of liters of water. Polluting water bodies with industrial chemicals, plastic waste, and sewage must be strictly prohibited by law. Conserving water resources ensures food security, protects aquatic life, and prevents future conflicts over natural resources. Every drop of water counts, and collective responsibility is required to safeguard this vital resource for a sustainable tomorrow.",
+            "Agriculture is the backbone of human civilization, providing the essential food, raw materials, and employment that sustain global populations. For centuries, farming has been the primary occupation in many developing countries, deeply rooted in rural traditions and economies. Farmers work hard across different seasons to grow grains, fruits, vegetables, pulses, and commercial crops like cotton and sugarcane. Agriculture also provides crucial raw materials to major industries such as textiles, sugar production, and food processing. In recent years, modern technology has brought significant changes to traditional farming practices. The use of advanced tractors, automated harvesting tools, and high-yielding seeds has increased crop production. Digital weather forecasting helps farmers plan planting and harvesting cycles accurately to avoid seasonal losses. Organic farming is gaining popularity as people realize the health benefits of food grown without synthetic chemical fertilizers and harmful pesticides. Soil health management, crop rotation, and proper water irrigation are essential to maintain land fertility over generations. Challenges like unpredictable climate change, shifting rainfall patterns, and fair market pricing need continuous support from governments and agricultural experts. Supporting farmers and investing in rural infrastructure are necessary steps to ensure long-term food security and economic stability for the nation.",
+            "The habit of saving money from a young age lays a solid foundation for financial security and personal independence in the future. Life is full of unpredictable events, such as medical emergencies, sudden job changes, or urgent repairs, where a financial cushion provides peace of mind. Saving money allows individuals to pursue higher education, start a small business, or buy a house without relying heavily on high-interest loans. It helps avoid the trap of debt and gives the freedom to make choices based on long-term goals rather than immediate financial pressure. To build a consistent saving habit, one must differentiate between essential needs and temporary wants. Creating a practical monthly budget and tracking minor expenses helps identify areas where spending can be reduced. Instead of saving what is left after spending, a smart approach is to set aside a fixed percentage of income first and manage expenses with the remaining amount. Utilizing simple banking tools like recurring deposits or automated savings accounts makes the process regular and disciplined. Small amounts saved consistently over time grow significantly due to the power of compounding interest. Financial security is not about how much money a person earns, but how wisely they manage, save, and invest what they have to ensure a stable future.",
+            "National parks are special areas protected by the government to preserve natural beauty, wildlife, and historic treasures. These parks are home to forests, rivers, mountains, and a wide variety of plants and animals. When people visit national parks, they get a chance to experience nature closely, away from the noise and pollution of cities. The fresh air, peaceful surroundings, and breath-taking views make national parks valuable places for rest and learning. One of the most important roles of national parks is wildlife protection. Many animal species are endangered due to hunting, deforestation, and climate change. National parks provide them with a safe habitat where they can live and reproduce without human interference. Park rangers and conservation experts monitor animals and take steps to prevent illegal activities like poaching. Because of these efforts, several species have recovered and survived over the years. National parks also help scientists conduct research about nature. They observe changes in ecosystems, study rare plants, and collect information about climate patterns. Students and researchers visit these parks to gain knowledge that can help solve environmental problems. Tourism in national parks further supports local communities. Visitors spend money on guide services, homestays, and local crafts, which improves the livelihood of nearby residents. However, it is important that tourism is managed responsibly so that the natural environment is not damaged. In conclusion, national parks are priceless treasures that protect both nature and human life. They remind us of the beauty and importance of our planet's ecosystems.",
+            "Tourism is one of the most vibrant and fast-growing industries in the world. It connects people from different cultures, languages, and traditions, allowing them to explore places beyond their own surroundings. When people travel, they don't just see new landscapes they discover new ways of living, thinking, and celebrating life. The excitement of planning a trip, experiencing something unfamiliar, and returning with unforgettable memories makes tourism a special part of human life. Tourism also plays a significant role in developing the economy of many countries. Popular destinations create numerous opportunities for employment in hotels, restaurants, transport services, and local markets. Small communities often depend on the income they earn from tourists buying local handicrafts, foods, and art. Historical monuments, national parks, and beaches help attract visitors, and the revenue earned is used to preserve these precious sites for future generations. However, tourism is not always beneficial if it is not managed properly. Too many visitors can harm natural habitats, increase pollution, and disturb wildlife. Some tourists damage historical places by writing on walls, littering, or ignoring safety rules. Therefore, responsible tourism is necessary, where travellers respect local culture, protect the environment, and follow guidelines to keep destinations clean and safe. In conclusion, tourism is a powerful way of bringing the world closer. It opens doors to learning, cultural exchange, and economic development. At the same time, it reminds us of our duty to protect the beauty we enjoy. When tourism becomes responsible and sustainable, everyone benefits travellers, local communities, and the natural world.",
+            "Communication skills are important in life. People share ideas through communication. Good communication builds trust. It strengthens relationships. It reduces misunderstandings. Clear words create better teamwork. Students need communication for presentations. Workers need it for meetings. Leaders need it to guide teams. Listening is a part of communication. Good listeners understand others better. They respond with respect. Kind words reduce conflict. Strong communication improves confidence. Communication is not only speaking. It includes body language. It includes eye contact. It includes expressions. It includes writing skills. A polite message creates a good impression. Positive communication grows friendship. Digital communication is common today. Emails and messages are used everywhere. Online meetings save travel time. But people must use words carefully online. Messages should be clear and respectful. Bad comments can hurt others. Children should learn communication skills in school. Family conversations make bonds stronger. Communication helps solve problems. It supports cooperation. It helps share knowledge. It helps build new ideas. It creates leadership. It connects countries. It spreads peace. A strong community needs good communication. People should speak honestly. They should listen patiently. They should express thoughts without fear. Good communication skills open opportunities. They help in interviews. They help in business. They help in education. Communication is a lifelong skill that everyone should improve.",
+            "Technology has changed our daily life. It makes work faster. It saves time. It connects people through messages and video calls. Students learn better with digital tools. Online classes help students study from any place. Doctors use modern machines for treatment. Farmers use smart systems to protect crops. Technology supports business growth. It helps companies reach customers worldwide. It creates new jobs in software and digital services. Safety systems reduce risks in factories. Homes use security devices for protection. But technology also needs careful use. Too much screen time harms the eyes. Social media may create stress. Children need guidance to use devices carefully. Cybercrime is increasing every year. People must protect personal information online. Schools should teach digital safety rules. Families should plan limited screen hours. Outdoor activities keep the mind fresh. Technology is a powerful tool. It should improve life, not control life. Smart use of technology brings comfort and progress. It helps solve big problems in health, education, and environment. It supports research and innovation. It connects different cultures. It spreads knowledge faster than before. Technology will keep growing. People must learn to use it wisely and responsibly. A balanced digital life creates a safer and happier future for all.",
+            "Food security ensures that every person has access to safe, nutritious, and affordable food for an active and healthy life. It is important for health, growth, and national stability. Farmers, food suppliers, and governments work together to maintain food availability and satisfy the needs of the population. Climate change, droughts, floods, pests, and soil degradation are major challenges affecting food production. Modern farming techniques such as drip irrigation, organic fertilizers, and improved seeds can increase crop yield and protect resources. Storage facilities must be improved to prevent wastage of grains, vegetables, and fruits. Fair market prices help farmers maintain income and support their families without financial stress. Food security also requires awareness about nutrition. People should eat balanced meals that include grains, vegetables, fruits, proteins, and healthy fats to avoid deficiency. Schools can provide nutrition programs to reduce malnutrition in children and encourage healthy eating habits. Reducing food waste at homes, restaurants, and supermarkets is equally important. Food banks and community kitchens can support families during difficult times. International cooperation is needed to share research, seeds, and farming technology to improve global production. Food security is not just about producing enough food; it is about distributing it fairly and ensuring that no one goes hungry. A well-fed society is healthier, more productive, and better prepared for the future.",
+            "Transportation plays a vital role in connecting people, goods, and services across different regions. Roads, railways, airways, and waterways support trade, tourism, and employment, making daily life more convenient. Public transport systems such as buses, trains, and metros reduce traffic and pollution. They allow students, workers, and travelers to reach destinations safely and affordably without stress. Modern technology has improved navigation through GPS, automated toll systems, and smart traffic management that help reduce delays. Electric vehicles are becoming popular because they reduce air pollution and save fuel, creating a cleaner environment. However, transportation challenges include road accidents, traffic congestion, and rising fuel costs that create difficulties for citizens. Governments must invest in safer roads, proper traffic signals, and emergency services to protect lives. Awareness campaigns can educate citizens about speed limits, helmet use, and seat belt safety. Transport also affects the environment. Emissions from vehicles contribute to climate change and health problems such as asthma. Promoting bicycles and walking for short distances can improve fitness and reduce pollution at the same time. Shipping and aviation industries are researching cleaner fuels to protect the planet. Transportation networks must be accessible for people with disabilities and senior citizens. When transportation is safe, efficient, modern, and eco-friendly, it becomes a strong foundation for progress and better quality of life.",
+            "Leadership is the ability to guide, motivate, and support others to achieve a shared goal. A good leader listens carefully, communicates clearly, and takes decisions responsibly. Leaders can be found in classrooms, workplaces, communities, and governments, shaping the future through their actions and attitudes. True leadership is not about power or control, but about service and integrity that inspire trust. A leader encourages teamwork, values different opinions, and helps people develop confidence by recognizing their strengths. Students can practice leadership by organizing events, helping classmates, and participating in group projects that build discipline and cooperation. In businesses, leaders inspire employees to improve their skills and work with dedication toward common objectives. In society, leaders create awareness about important issues and support the welfare of people by promoting fair and ethical practices. Honesty and transparency are essential qualities because trust is the foundation of leadership. A leader must remain calm during challenges and learn from mistakes to become stronger. Leadership also requires empathy, which means understanding the feelings of others and offering support when needed. When leaders empower people, they create more leaders instead of followers. History is full of individuals who changed the world through courage and vision. Anyone who brings positive change and encourages growth is a leader. Leadership begins with responsibility, and it becomes successful with compassion.",
+            "Rural development is essential for balanced national progress. Villages are the backbone of agriculture, dairy farming, and natural resource management. Many farmers work tirelessly to grow crops that supply food to cities and support the nation's economy. However, some rural areas lack good roads, schools, hospitals, and job opportunities, which limits community growth. Rural development programs aim to improve these conditions by providing better infrastructure, clean water, electricity, and digital services that connect villages to larger markets. Education is a powerful tool that can transform rural communities and open new possibilities for children. Skilled teachers and modern learning resources help children build knowledge and confidence for future careers. Healthcare services should provide vaccinations, maternity care, and awareness about hygiene to reduce diseases. Employment training in fields such as farming technology, carpentry, tailoring, and small businesses can create income sources and encourage self-reliance. Women's self-help groups support financial independence and encourage entrepreneurship through savings and cooperation. Young people can contribute by learning new techniques that improve farming and reduce waste. Technology, if used effectively, can connect farmers to markets where they receive fair prices for their products. Eco-friendly farming protects soil and reduces water pollution. Villages rich in culture and tradition also have great tourism potential. When rural and urban areas grow together, the entire nation becomes stronger and more self-reliant.",
+            "Art and culture are the heart of human identity. They reflect traditions, beliefs, and histories that shape societies. Art includes music, dance, painting, literature, and architecture, each expressing emotions and creativity in unique ways. Culture teaches values such as respect, kindness, and community bonding. Festivals bring people together and strengthen relationships by creating joyful memories. Traditional songs and folk stories preserve wisdom passed down from ancestors and help young generations understand their roots. Museums and cultural centers protect historical objects so future generations can understand their heritage and appreciate their uniqueness. In the modern world, cultures blend through travel, media, and communication. People learn new languages, enjoy different foods, and appreciate diverse customs that enrich global harmony. Artists use their skills to inspire social change, raise awareness, and support unity through meaningful expression. Art therapy helps people manage stress and express feelings without fear. Schools should promote art education to enhance imagination and creative thinking among students. Communities can protect culture by supporting local artists, organizing festivals, and preserving ancient monuments. Cultural diversity makes the world more colorful and interesting. Respecting cultures does not mean rejecting progress; instead, it helps society move forward with strong identity and gratitude. When people value art and culture, they create a peaceful world where traditions and innovations coexist with harmony.",
+            "Rudra played the flute better than anyone in his village. People said the forest birds paused to listen whenever he practiced near the river. The forest was alive with music: parrots chattered like excited children, peacocks drummed their feathers, and streams hummed gentle tunes. But over the years, trees were cut for roads and markets. Animals vanished one by one, and the air felt heavier, as if the forest itself had forgotten how to breathe. Rudra tried playing the flute again, hoping music might heal the land. But the melodies felt lonely, incomplete. One evening, an old herbalist told him, \"The forest listens, but it needs help, not just music.\" Rudra gathered students from his school and began planting saplings along the riverbank. They named each tree after a musical instrument: sitar, tabla, flute, veena. Seasons passed. Leaves returned, birds returned, and slowly the music returned. One morning, a rare songbird perched on a branch and whistled a tune that matched Rudra's melody. Villagers gathered, amazed at the harmony between flute and forest. Rudra realized that music and nature were never separate; one protected the other.",
+            "Disaster management is an important process that prepares communities to face natural and man-made emergencies. Floods, earthquakes, cyclones, and forest fires can cause loss of lives and property. Industrial accidents, chemical leaks, and transportation failures are also dangerous. Effective disaster management involves planning, early warning systems, quick rescue support, and proper rehabilitation of affected people. Governments must invest in strong infrastructure, emergency response teams, and medical services. Schools should include disaster awareness programs so students know how to stay safe during emergencies. Communities can participate in training sessions that teach first-aid, emergency communication, and evacuation routes. Technology plays a significant role in predicting weather patterns and informing citizens through mobile alerts and media. International organizations also help countries facing severe disasters by sending medical supplies, food, and rescue teams. After a disaster, rebuilding homes, schools, and workplaces requires patience, resources, and cooperation. People should support one another and remain emotionally strong during recovery. Environmental protection can prevent some disasters by reducing deforestation and pollution. Disaster management is not only about reacting to events, but also preparing to minimize damage before it happens. When nations work together, share knowledge, and help those in need, the world becomes safer and more resilient.",
+            "Honesty is a virtue that strengthens character and builds trust among people. An honest person speaks the truth and behaves with fairness, even when it is difficult. Honesty creates strong relationships in families, friendships, schools, and workplaces. When people trust one another, they work together more effectively and solve problems peacefully. Dishonesty may provide short-term benefits, but it eventually leads to regret, guilt, and broken trust. Students must learn honesty at an early age, especially in studies and examinations. Cheating might help them pass a test, but it prevents real learning and weakens their future. In business, honesty is the foundation of good reputation. Customers support companies that provide quality products and transparent services. Employees respect leaders who are truthful and responsible. Honesty also matters in personal decisions. People should be true to themselves, recognize their strengths, and improve their weaknesses. Being honest does not mean being rude. Truth should be expressed with kindness and respect for others' feelings. Society becomes safer and more peaceful when citizens follow rules and speak truthfully. Honesty encourages fairness in law, politics, and public service. It protects human dignity and promotes justice. When individuals practice honesty, they inspire others and contribute to a world filled with trust, respect, and harmony.",
+            "Environment plays a crucial role in sustaining life on Earth. Clean air, pure water, and healthy soil are essential for human survival. Unfortunately, rapid industrialization and careless human activities have damaged the environment. Air pollution from vehicles and factories is causing breathing problems in cities. Water pollution from chemicals and plastics is affecting rivers and oceans, harming marine life and spreading diseases. Deforestation has destroyed forests that once provided fresh oxygen and protected biodiversity. Climate change is now causing storms, droughts, and unpredictable seasons, affecting agriculture and food security. People need to understand that protecting the environment is not the responsibility of governments alone. Every person must take small but meaningful steps. Saving electricity, reducing plastic usage, planting trees, and recycling waste can create significant improvements. Students should be educated about environmental conservation so they develop respect for nature from a young age. Farmers can use eco-friendly techniques that protect soil and water. Companies should adopt responsible production methods to reduce carbon emissions. Green energy sources like wind, solar, and hydropower are sustainable and help reduce pollution. Nature is a priceless gift, and once it is destroyed, it cannot be easily restored. Protecting the environment ensures a healthy future for upcoming generations. Human progress is important, but it must never come at the cost of nature.",
+            "Kabir had always been fascinated by flight. As a child, he watched birds glide across the morning sky and dreamed of joining them. His family could not afford expensive toys, so he used paper from old notebooks to create wings of different shapes. Some looked like eagle feathers, others like butterfly wings painted with bright colors. People laughed and said, \"Paper cannot take you anywhere.\" Kabir only smiled and kept experimenting. Years passed, and Kabir studied aerodynamics in college. He discovered that his childhood paper models were not just toys; they followed real patterns of lift and balance. He dedicated his research to designing lightweight wings for rescue drones that could reach disaster zones where helicopters could not land. His prototypes were inspired by the very paper shapes he once tested in his courtyard. Kabir presented his invention at an international science exhibition. Judges were amazed that his idea originated from simple paper wings. Soon, emergency teams used his lightweight drones to deliver medicine, food, and water to people trapped after floods and earthquakes. Kabir visited his old home and saw children still playing with paper. He taught them that ideas may begin small, but with patience they can soar across the world.",
+            "In a small village, school did not begin with a bell or a timetable. It began under the shade of a giant banyan tree. The tree had stood there for generations, its branches stretching like protective arms over children who gathered with notebooks and hopeful hearts. Their teacher, Ms. Raina, believed that learning was not just about memorizing lessons but exploring the world with curiosity. Some students sat on mats, others on smooth stones, and a few climbed the lower branches to enjoy the cool breeze while reading poetry. Ms. Raina used leaves to teach shapes, soil to explain history, and raindrops to describe the water cycle. Whenever a new bird built a nest, the whole class observed and wrote stories about it. Even parents joined sometimes, sharing folk tales and traditional skills that had been passed down for centuries. One day, government officers visited the village and promised to build a concrete school building. The children were excited, yet they asked if the banyan tree could remain their classroom too. Officials agreed, realizing the tree was not merely a place but a spirit of learning. Years later, former students returned as doctors, farmers, engineers, and artists. They sat beneath the same banyan tree and agreed that knowledge grows best when it has roots in nature, kindness, and imagination.",
+            "Blue Harbor was a fishing town where nights were darker than anywhere else. There were no streetlights along the shore, and fishermen struggled to guide boats safely. In a small workshop near the lighthouse lived a lantern maker named Yusuf. He crafted lanterns from recycled glass bottles, seashells, and driftwood washed onto the sand. Every lantern was unique, each telling a different story through its colored glass. One stormy evening, the lighthouse lamp broke, and fishermen preparing to return feared they would never reach the shore. Waves roared like wild animals, and families waited helplessly. Yusuf carried every lantern he had ever made and placed them along the coastline. When he lit them, a breathtaking path of soft blues, greens, and golden lights stretched across the harbor like stars fallen into the water. One by one, the boats found their way back. The next morning, fishermen said the sea looked less frightening when Yusuf's lanterns guided them. Children visited his workshop to learn how light can be shaped from broken things. Yusuf taught them that courage is not only loud and heroic; sometimes it is a quiet light helping others return home safely. From that day, Blue Harbor became known as \"The Town of a Thousand Lanterns,\" a place where light was crafted not by machines, but by care, imagination, and shared hope.",
+            "Mira lived in a village where rains decided everything. If rain arrived on time, crops grew and festivals filled the streets with music. If the clouds changed their mind, farmers spent months worrying. Mira loved the sound of rain more than anything in the world. While others hid indoors, she listened to every drop like a musician listens to instruments. Her dream was to compose a melody inspired by rain, a song that could remind people of hope even in difficult seasons. One summer, dark clouds disappeared for weeks, and everyone began to worry. The wells dried, the fields cracked, and Mira's father whispered that their crops might fail. At night, when the village couldn't sleep, Mira took out her small flute and began playing soft notes that sounded like falling rain. Her music echoed through courtyards and narrow paths. Children gathered near her window, listening quietly. The next evening, more people joined. Soon, villagers who had stopped speaking to each other because of stress now sat together in silence, sharing moments of peace. Mira's music did not bring rain immediately, but something beautiful changed: fear became patience. Finally, one early morning, clouds returned. As rain touched the earth, villagers said they heard a rhythm, almost as if the sky remembered Mira's song.",
+            "Every city had libraries filled with famous novels, but Aanya discovered something unusual: a museum of unwritten books. It was hidden in a quiet lane, and most people walked past it without noticing the rusty blue gate. Curious, Aanya stepped inside. Instead of shelves, there were glowing clouds floating in a large hall. A gentle voice said, \"These are stories that were never written, though someone once dreamed them.\" Aanya touched one glowing cloud, and suddenly she saw a girl imagining a book about friendship but putting it aside because she feared nobody would read it. Another cloud showed a boy who drew maps of magical kingdoms yet never shared them. Aanya felt sad thinking of all the ideas that remained silent. The voice whispered, \"Stories grow when someone believes in them.\" Aanya left the museum with a new determination. She began writing her own story, a tale about courage hidden in ordinary days. At first, her words felt uncertain, but she continued, remembering the museum's message. She shared her story at school, and classmates loved it because it reminded them of their own dreams. Aanya returned to the lane many times, yet the museum never appeared again. Still, she smiled, knowing its message lived inside her: Talent grows when we dare to use it.",
+            "Books are a treasure of knowledge and imagination. They educate, entertain, and encourage readers to think deeply about life. Reading improves language skills, memory, and concentration. It introduces new ideas, cultures, and experiences. Many people find comfort and inspiration in books during difficult times. Storybooks allow readers to travel to different worlds, meet interesting characters, and explore exciting adventures without leaving their homes. Knowledge-based books teach subjects such as science, history, economics, and technology, helping students and professionals in their fields. Libraries and e-books make reading accessible to everyone. They provide a peaceful environment for learning and research. Parents should develop reading habits in children from a young age because strong reading ability builds confidence and creativity. Instead of spending too much time on mobile games or television, reading for even thirty minutes a day can improve thinking and communication skills. Book clubs and reading groups help people share ideas and understand different perspectives. Authors also play a special role by using their words to inform and inspire society. Writing a book requires patience, research, and imagination. Great books leave a lasting impact on readers and shape generations. Reading is not just a hobby, it is a lifelong companion that guides, supports, and transforms lives.",
+            "Time is one of the most valuable resources in life. Unlike money and material possessions, once time is gone, it can never be brought back. People who understand the importance of time use it wisely to achieve their goals. Planning daily activities helps in reducing confusion and increasing productivity. Students should create a study schedule that includes breaks, revision, and practice. Professionals can divide tasks into priorities and complete them step by step. Time management also helps in maintaining balance between personal and professional life. Social media, unnecessary arguments, and procrastination waste precious hours that could be used for learning or improving skills. Waking up early gives more time to focus on important tasks and reduces stress. People who respect time are more likely to succeed in education, career, and relationships. Time also teaches valuable lessons. It shows that situations change, difficult moments pass, and new opportunities appear. Therefore, patience and hard work are essential. Respecting others' time is also a sign of good manners. Being punctual shows responsibility and builds trust. Life becomes meaningful when people invest time in health, family, creativity, and community service. Time is like a flowing river, and the best way to live is to make every moment count.",
+            "Nature is a beautiful gift that supports life on Earth. The air we breathe, the water we drink, and the food we eat come directly from natural resources. Forests provide shelter to countless animals and help maintain environmental balance. Rivers and oceans regulate the climate and support agriculture, trade, and transportation. However, increasing pollution and careless human activities are harming nature. Plastic waste, deforestation, and chemical emissions are destroying ecosystems. Climate change has resulted in rising temperatures, melting glaciers, and unpredictable weather conditions. To protect nature, everyone must act responsibly. Planting more trees, saving water, using eco-friendly products, and reducing waste are simple steps that make a big difference. Governments and organizations are promoting renewable energy sources such as solar and wind power to reduce dependence on fossil fuels. Schools can teach students about conservation, recycling, and sustainable living. Communities can organize cleaning drives and awareness campaigns to protect forests, rivers, and wildlife. Nature also has the power to heal the human mind. Spending time in fresh air, listening to birds, and watching the sky reduce stress and improve overall well-being. When people respect nature, they ensure a safer future for the next generation. Protecting nature is not just a responsibility, it is a moral duty for everyone.",
+            "Health is the greatest wealth a person can have in life. A strong mind lives in a healthy body, and therefore it is important to take proper care of both. People often ignore their health due to busy schedules, stress, and unhealthy lifestyle choices. Eating fresh and nutritious food keeps the body energetic and reduces the risk of diseases. Drinking enough water and getting sound sleep also support good health. Exercise strengthens muscles, improves digestion, and keeps the heart active. Even a simple habit like walking for thirty minutes every day can make a big difference. Mental health is equally important, and it requires peace, positive relationships, and meaningful goals. Talking to family and friends, practicing meditation, or spending time with nature helps reduce tension. Visiting doctors for regular check-ups ensures early diagnosis and better treatment. A healthy person can work more efficiently, enjoy quality time with loved ones, and contribute to society. Schools and workplaces should create awareness about healthy habits and encourage fitness activities. Social media and advertisements sometimes promote unrealistic body images, but true fitness is not about looking perfect, it is about feeling strong and confident. When people value health, they live a happier and more productive life.",
+            "Ishaan loved computers, but he also loved nature. While other students played games, he spent hours learning programming and reading about forests. His village once had many trees, but most were cut down for construction. Summers grew hotter each year, and even the birds left. One evening, as Ishaan walked home from school, he wondered if technology could help restore the greenery. He created a simple app that counted how many trees a community planted, showing progress through colorful charts. Ishaan shared the idea with his teacher, who encouraged him to present it during the school's environment week. At first, students laughed and said, \"How can a student change the climate?\" But Ishaan calmly explained that big changes begin with small steps and strong ideas. Soon, teachers and families began using the app. People planted saplings outside schools, farms, and bus stops. The village council became interested and supported Ishaan's project. Within a year, more than eight hundred trees were planted, and birds slowly returned. News reporters visited the village to feature his work. Ishaan realized that knowledge becomes powerful when it helps others. He kept improving the app and dreamed of expanding it nationwide. His village taught the world that when technology and nature work together, the future grows greener for everyone.",
+            "Karan was a taxi driver who worked in a busy city. He wanted to give safe and fast service to his passengers. Earlier, he used to ask people for directions when traveling to new places. Sometimes he made mistakes and wasted time. One day, a passenger told him about a navigation app. Karan downloaded the app and learned to use it. The app showed traffic, shortest routes, and time needed to reach each location. Karan followed the map and reached places faster. Passengers were happy with his service and recommended him to others. Karan cleaned his taxi daily and kept drinking water for passengers. He also played soft music so people could travel comfortably. His earnings increased slowly, and he saved money for his children's education. Karan believed that technology and good behavior could help people grow. He encouraged other taxi drivers to use navigation apps as well. They discussed safe driving and helping passengers with respect. Karan understood that learning new skills makes work easier. His story teaches us that small steps toward improvement can change a person's life. When technology is used in positive ways, it helps workers serve better and build trust. Karan continued driving with confidence and kindness.",
+            "Sita was a school teacher who enjoyed helping her students learn new things. She wanted her classroom to be a place where children felt excited about education. Sita used simple teaching methods and explained lessons with real examples. One day, she learned about digital learning tools that could make study more interesting. She started using short animated videos to explain science and history. Students paid more attention and asked more questions. Sita encouraged them to explore ideas and think independently. She also organized small group activities where students worked together and shared knowledge. Parents noticed that their children were becoming more confident. Sita believed that teaching was not only about giving answers but also about guiding students to find answers themselves. When schools started online classes, she learned how to use video meetings and shared worksheets through mobile phones. It was challenging at first, but she continued practicing until she became comfortable. She discovered that technology could connect students to global knowledge. Sita inspired other teachers to try new methods. Her story shows that learning is not just for students. Teachers also need to improve skills and use new tools. Education becomes stronger when everyone learns together and supports each other.",
+            "Arjun was a shopkeeper who sold groceries in a small market. He worked hard every day, but he wanted to grow his business. One afternoon, a customer asked if he accepted digital payments. Arjun did not know how these apps worked, but he became curious. His friend showed him how to install a payment app and how to receive money safely. Arjun practiced using the app and soon felt comfortable with it. Customers were happy because they did not always have to carry cash. Arjun noticed that more people started visiting his shop. He arranged products neatly and wrote clear labels so customers could find items easily. He also used a small mobile speaker to tell offers and discounts. His income improved slowly, and he used the extra money to bring more products to the shop. Arjun learned that good service and modern tools could help small businesses grow. He shared his experience with other shopkeepers in the market. They discussed new ideas and learned together. Arjun's family felt proud of him because he changed his business with learning and patience. His story teaches us that technology is useful even for small shops. Anyone who works hard and learns new skills can improve their life and serve people better.",
+            "Meena was a hardworking farmer who lived in a small village near green fields. She loved her land and wanted to improve her farming methods. Earlier, she depended only on traditional advice, but one day her son showed her a weather app on his phone. The app told farmers about rain, wind, and temperature changes. Meena started checking the app before working in the field. This helped her decide the best day to plant seeds. She used good quality seeds and natural fertilizers to make the soil healthy. Slowly, she saw better growth in her crops. People in the village were surprised because her harvest was improving each season. Meena also learned about market prices using her phone. She sold her vegetables at the best rate and earned more money for her family. Her daughter helped her record expenses and profits in a simple mobile notebook app. Meena understood that technology was not only for cities; even farmers could use it to make work easier. She shared her knowledge with other women farmers and encouraged them to learn. Her journey taught everyone that learning new skills helps families grow. Meena proved that small ideas can bring big changes in life. Her story shows that technology can support traditional farming in a meaningful way.",
+            "Rohan was a young student who lived in a small town and wanted to improve his future. He was good at reading books, but he knew that modern life required new skills. One day, his teacher told the class that technology could help students learn faster. Rohan started using online lessons on his phone. He watched videos, took notes, and read articles about different subjects. At first, it was difficult for him to understand everything, but he did not give up. He learned that progress takes time and that every small step brings a person closer to success. His parents supported him and encouraged him to keep learning. Rohan also practiced typing every day because he wanted a job in an office. He knew that companies needed people who could type fast and write clearly. Sometimes he made mistakes, but he learned from them and improved slowly. With regular study and practice, he became more confident. His teacher noticed his improvement and appreciated his hard work. Rohan understood that education was not only about memorizing answers but also about learning useful skills. He realized that knowledge becomes powerful when it is used in real life. His story reminds us that learning every day can change the future in a positive way.",
+            "Healthy food gives energy to the body. It protects from diseases. It helps the mind stay active. Fruits and vegetables are full of vitamins. Grains give strength. Milk builds bones. Clean water keeps the body fresh. Junk food tastes good but harms health. Too much sugar causes problems. Oily food increases fat. Soft drinks are not healthy. People should choose healthy meals. Children need good food to grow. Students study better with a strong mind. Workers perform well with a healthy body. Families should cook balanced meals. Eating at the right time is important. Skipping breakfast is not good. Fresh home food is better than fast food. Exercise supports healthy food. Sleep completes body repair. Farmers play an important role. They grow food for everyone. Markets should keep clean food. Governments should check food quality. Schools should teach nutrition. Hospitals should guide patients about diet. Healthy food improves mood. It reduces stress. It increases lifespan. It supports strong immunity. When people eat healthy food, they feel confident. They enjoy life. They work better. They learn better. They live better. Healthy eating is not costly. It only needs planning. Eating simple food is a smart choice. Good food habits create a healthy nation for a stronger future.",
+            "Every night, a strange train passed through Riverstone Station, though no one ever saw its passengers. It was said the train only carried dreams people abandoned—dreams that still wanted a chance to live. The station master, Mr. Dev, never believed the stories until he met a boy named Arin, who waited on the platform holding a dusty sketchbook. \"I used to draw buildings,\" Arin whispered, \"but everyone said architects need money, talent, and luck. I stopped trying.\" Mr. Dev noticed the approaching train, glowing like silver mist. Instead of wheels, it glided above the tracks. The doors opened, and Arin's sketches lifted into the air, forming bridges, libraries, and parks. A gentle voice spoke, \"Dreams fade when ignored, but they never stop waiting.\" Arin felt a spark he thought he had lost. He grabbed his sketchbook and promised himself he would learn, practice, and design something meaningful one day. Years later, Arin became an architect who created schools and hospitals in rural areas. When asked where his journey began, he always said, \"On a platform where my dream returned to me.\" The people of Riverstone Station still speak about the mysterious train and its message: \"Tomorrow belongs to those who refuse to give up.\""
+        ];
+
+        let targetWords = [];
+        let timerInterval = null;
+        let timeElapsed = 0;
+        let timeLimit = 0;
+        let isTestRunning = false;
+        let totalKeystrokes = 0;
+        let backspaceCount = 0;
+        let previousInputValue = "";
+
+        const passageSelect = document.getElementById("passage-select");
+        const examSelect = document.getElementById("exam-select");
+        const timerSelect = document.getElementById("timer-select");
+        const fontSelect = document.getElementById("font-select");
+        const backspaceSelect = document.getElementById("backspace-select");
+        const themeSelect = document.getElementById("theme-select");
+        
+        const startBtn = document.getElementById("start-btn");
+        const textContainer = document.getElementById("text-container");
+        const hiddenInput = document.getElementById("hidden-input");
+        const typeDisplay = document.getElementById("type-display");
+        
+        const statTime = document.getElementById("stat-time");
+        const statKeystrokes = document.getElementById("stat-keystrokes");
+        const statBackspace = document.getElementById("stat-backspace");
+        const statKpm = document.getElementById("stat-kpm");
+        const statWpm = document.getElementById("stat-wpm");
+        const statRight = document.getElementById("stat-right");
+        const statWrong = document.getElementById("stat-wrong");
+        const statAccuracy = document.getElementById("stat-accuracy");
+
+        window.onload = () => {
+            loadPassage();
+            changeFontSize();
+            toggleTheme();
+        };
+
+        typeDisplay.addEventListener("click", () => {
+            if (isTestRunning) hiddenInput.focus();
+        });
+
+        // मॅन्युअल स्थिर स्क्रोलिंग आणि हायलाइटिंग फंक्शन
+        function updateParagraph(currentWordIndex) {
+            textContainer.innerHTML = "";
+            const rawTyped = hiddenInput.value;
+            const typedWords = rawTyped.split(" ");
+
+            targetWords.forEach((word, index) => {
+                const wordSpan = document.createElement("span");
+                wordSpan.id = `word-${index}`;
+                wordSpan.className = "passage-word";
+
+                // टायपिंग पूर्ण झालेल्या शब्दांसाठी बरोबर/चुकीचे तपासणे
+                if (index < currentWordIndex) {
+                    let typed = typedWords[index] || "";
+                    if (typed === word) {
+                        wordSpan.classList.add("passage-correct");
+                    } else {
+                        wordSpan.classList.add("passage-incorrect");
+                    }
+                } else if (index === currentWordIndex) {
+                    // सध्या टायपिंग सुरू असलेला शब्द हायलाईट करणे
+                    wordSpan.classList.add("current-word");
+                }
+
+                wordSpan.innerText = word;
+                textContainer.appendChild(wordSpan);
+                
+                // शब्दांच्या मध्ये स्पेस जोडणे
+                if (index < targetWords.length - 1) {
+                    textContainer.appendChild(document.createTextNode(" "));
+                }
+            });
+
+            // स्थिर स्क्रोलिंग पद्धत (वेब पेज न हलवता केवळ बॉक्स स्क्रोल करणे)
+            const allWordSpans = textContainer.querySelectorAll('.passage-word');
+            if (allWordSpans[currentWordIndex]) {
+                const activeWord = allWordSpans[currentWordIndex];
+                const parent = textContainer;
+                const targetScrollTop = activeWord.offsetTop - (parent.clientHeight / 2) + (activeWord.clientHeight / 2);
+                parent.scrollTo({
+                    top: targetScrollTop,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        function loadPassage() {
+            const index = passageSelect.value;
+            const fullText = passages[index] || passages[0];
+            
+            targetWords = fullText.trim().split(/\s+/);
+            
+            updateParagraph(0);
+            resetTest();
+        }
+
+        function toggleExamMode() {
+            if (examSelect.value === "On") {
+                document.body.classList.add("exam-mode-active");
+            } else {
+                document.body.classList.remove("exam-mode-active");
+            }
+        }
+
+        function changeFontSize() {
+            const size = fontSelect.value;
+            textContainer.style.fontSize = size;
+            typeDisplay.style.fontSize = size;
+            hiddenInput.style.fontSize = size;
+        }
+
+        function toggleTheme() {
+            if (themeSelect.value === "Dark") {
+                document.body.setAttribute("data-theme", "dark");
+            } else {
+                document.body.removeAttribute("data-theme");
+            }
+        }
+
+        function startTest() {
+            if (isTestRunning) return;
+
+            let selectedTime = timerSelect.value;
+            timeLimit = selectedTime === "No Time" ? 0 : parseInt(selectedTime);
+
+            isTestRunning = true;
+            hiddenInput.disabled = false;
+            
+            // टेस्ट सुरू झाल्यावर टच इव्हेंट चालू करणे जेणेकरून टायपिंग नीट फोकस होईल
+            hiddenInput.style.pointerEvents = "auto";
+            hiddenInput.focus();
+            
+            startBtn.disabled = true;
+            passageSelect.disabled = true;
+            timerSelect.disabled = true;
+            
+            timeElapsed = 0;
+            previousInputValue = "";
+            hiddenInput.value = "";
+            
+            updateTimerDisplay();
+            processTyping();
+
+            timerInterval = setInterval(() => {
+                timeElapsed++;
+                updateTimerDisplay();
+                calculateStats();
+                
+                if (timeLimit > 0 && timeElapsed >= timeLimit) {
+                    endTest();
+                }
+            }, 1000);
+        }
+
+        function endTest() {
+            clearInterval(timerInterval);
+            isTestRunning = false;
+            hiddenInput.disabled = true;
+            
+            // टेस्ट संपल्यावर टच इव्हेंट बंद करणे जेणेकरून युझर थेट खालच्या आऊटपुट बॉक्समधील स्क्रोल बार ओढून चुका पाहू शकतील
+            hiddenInput.style.pointerEvents = "none";
+            
+            startBtn.disabled = false;
+            passageSelect.disabled = false;
+            timerSelect.disabled = false;
+            calculateStats();
+            
+            // सर्व टाईप झालेल्या शब्दांचे पुनरावलोकन (Review) वरच्या बॉक्समध्ये दाखवणे
+            const rawTyped = hiddenInput.value;
+            const typedWords = rawTyped.split(" ");
+            updateParagraph(typedWords.length);
+        }
+
+        function resetTest() {
+            clearInterval(timerInterval);
+            isTestRunning = false;
+            timeElapsed = 0;
+            totalKeystrokes = 0;
+            backspaceCount = 0;
+            previousInputValue = "";
+
+            hiddenInput.value = "";
+            hiddenInput.disabled = true;
+            
+            // रिसेट केल्यावर टच इव्हेंट बंद ठेवणे
+            hiddenInput.style.pointerEvents = "none";
+            
+            typeDisplay.innerHTML = `<span style="color: #888;">Start typing here...</span>`;
+            
+            startBtn.disabled = false;
+            passageSelect.disabled = false;
+            timerSelect.disabled = false;
+
+            let selectedTime = timerSelect.value;
+            timeLimit = selectedTime === "No Time" ? 0 : parseInt(selectedTime);
+            updateTimerDisplay();
+
+            const spans = textContainer.querySelectorAll(".passage-word");
+            spans.forEach(span => {
+                span.className = "passage-word";
+            });
+            
+            statKeystrokes.innerText = "0";
+            statBackspace.innerText = "0";
+            statKpm.innerText = "0";
+            statWpm.innerText = "0";
+            statRight.innerText = "0";
+            statWrong.innerText = "0";
+            statAccuracy.innerText = "0%";
+            
+            textContainer.scrollTop = 0;
+            typeDisplay.scrollTop = 0;
+        }
+
+        function updateTimerDisplay() {
+            let displayTime = timeLimit > 0 ? timeLimit - timeElapsed : timeElapsed;
+            let minutes = Math.floor(displayTime / 60);
+            let seconds = displayTime % 60;
+            statTime.innerText = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+        }
+
+        hiddenInput.addEventListener("keydown", (e) => {
+            if (!isTestRunning) return;
+            
+            if (e.key === "Backspace") {
+                if (backspaceSelect.value === "Off") {
+                    e.preventDefault();
+                    return;
+                }
+                backspaceCount++;
+                statBackspace.innerText = backspaceCount;
+            } else if (e.key.length === 1) {
+                totalKeystrokes++;
+                statKeystrokes.innerText = totalKeystrokes;
+            }
+        });
+
+        // टायपिंग करताना आणि टेस्ट सुरू असताना दोन्ही टायपिंग बॉक्सचे स्क्रोलिंग एकमेकांसोबत सिंक्रोनाइझ (Sync) करणे
+        hiddenInput.addEventListener("scroll", () => {
+            typeDisplay.scrollTop = hiddenInput.scrollTop;
+        });
+
+        // १. कर्सर मागे-पुढे हलवल्यानंतर आणि क्लिक, टच किंवा माऊस सोडल्यानंतर नवीन कर्सर पोझिशन अचूक मिळवणे
+        hiddenInput.addEventListener("click", () => {
+            if (isTestRunning) processTyping();
+        });
+
+        hiddenInput.addEventListener("mouseup", () => {
+            if (isTestRunning) processTyping();
+        });
+
+        hiddenInput.addEventListener("touchend", () => {
+            if (isTestRunning) {
+                // लहानसा डिले दिला आहे जेणेकरून सिलेक्शन नवीन जागी पोहोचेल
+                setTimeout(processTyping, 40);
+            }
+        });
+
+        hiddenInput.addEventListener("keyup", (e) => {
+            if (!isTestRunning) return;
+            if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"].includes(e.key)) {
+                processTyping();
+            }
+        });
+
+        hiddenInput.addEventListener("input", (e) => {
+            if (!isTestRunning) return;
+
+            if (backspaceSelect.value === "Off" && hiddenInput.value.length < previousInputValue.length) {
+                hiddenInput.value = previousInputValue;
+                return;
+            }
+
+            previousInputValue = hiddenInput.value;
+            processTyping();
+        });
+
+        // २. कर्सर अलाईनमेंट (Pixel-Perfect Alignment) राखण्यासाठी सुधारित टायपिंग डिस्प्ले प्रक्रिया
+        function processTyping() {
+            const rawTyped = hiddenInput.value;
+            const caretPos = hiddenInput.selectionStart;
+
+            // अक्षरांचे अंतर बिघडू नये म्हणून स्पेस आणि कॅरेक्टर्सचे भाग योग्य पद्धतीने विभागले आहेत
+            const part1 = rawTyped.substring(0, caretPos);
+            const part2 = rawTyped.substring(caretPos);
+
+            const escapeHtml = (text) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+            // कर्सर प्रत्यक्ष रेंडर होत असताना देखील फॉन्ट आणि अलाईनमेंट एकसमान राहते
+            typeDisplay.innerHTML = `<span>${escapeHtml(part1)}</span><span class="cursor"></span><span>${escapeHtml(part2)}</span>`;
+
+            // सक्रिय शब्दाचा इंडेक्स मिळवणे
+            const textBeforeCaret = rawTyped.substring(0, caretPos);
+            const typedWords = rawTyped.split(" ");
+            const currentWordIndex = textBeforeCaret.split(" ").length - 1;
+
+            // हिरवे आणि लाल रंगाचे सर्व हायलाईट्स केवळ वरच्या पॅसेजमध्ये दाखवणे
+            updateParagraph(currentWordIndex);
+
+            // आऊटपुट टायपिंग बॉक्स स्क्रोल करणे
+            const cursorEl = typeDisplay.querySelector('.cursor');
+            if (cursorEl) {
+                const bottomPos = cursorEl.offsetTop - typeDisplay.offsetTop;
+                if (bottomPos > typeDisplay.scrollTop + typeDisplay.clientHeight - 40 || bottomPos < typeDisplay.scrollTop) {
+                    typeDisplay.scrollTop = bottomPos - (typeDisplay.clientHeight / 2);
+                }
+            }
+
+            // अदृश्य इनपुटचे स्क्रोलिंग प्रत्यक्ष टायपिंग बॉक्सशी पूर्णपणे सिंक करणे
+            hiddenInput.scrollTop = typeDisplay.scrollTop;
+
+            calculateStats();
+
+            if (currentWordIndex >= targetWords.length) {
+                endTest();
+            }
+        }
+
+        function calculateStats() {
+            const rawTyped = hiddenInput.value;
+            const typedWords = rawTyped.split(" ");
+            
+            let correctChars = 0;
+            let rightWords = 0;
+            let wrongWords = 0;
+
+            for (let i = 0; i < typedWords.length; i++) {
+                let typed = typedWords[i];
+                let target = targetWords[i] || "";
+                
+                if (i < typedWords.length - 1) { 
+                    if (typed === target) {
+                        rightWords++;
+                        correctChars += target.length + 1; 
+                    } else {
+                        wrongWords++;
+                    }
+                } else { 
+                    for(let j=0; j < Math.min(typed.length, target.length); j++) {
+                        if (typed[j] === target[j]) correctChars++;
+                    }
+                }
+            }
+
+            let minutes = timeElapsed / 60;
+            let wpm = 0;
+            let kpm = 0;
+
+            if (minutes > 0) {
+                wpm = Math.round((correctChars / 5) / minutes);
+                kpm = Math.round(totalKeystrokes / minutes);
+            }
+
+            let accuracy = 0;
+            if (rawTyped.length > 0) {
+                accuracy = Math.round((correctChars / rawTyped.length) * 100);
+                if(accuracy > 100) accuracy = 100;
+            }
+
+            statKpm.innerText = kpm;
+            statWpm.innerText = wpm;
+            statRight.innerText = rightWords;
+            statWrong.innerText = wrongWords;
+            statAccuracy.innerText = accuracy + "%";
+        }
+    </script>
+</body>
+</html>
