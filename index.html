@@ -242,7 +242,7 @@ body {
 
 @media screen and (max-width: 480px) {
     .controls-row { grid-template-columns: repeat(2, 1fr); gap: 8px; padding-bottom: 10px; margin-bottom: 10px; }
-    .stats-grid { grid-template-columns: 1fr; gap: 10px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
     body { padding: 8px; }
     #text-container, .typing-container { height: 140px; }
 }
@@ -385,28 +385,7 @@ body.exam-mode-active:not(.exam-submitted) #exam-sensitive-stats {
             ⚠️ Warning: CAPS LOCK is ON!
         </div>
 
-        <div class="workspace-layout">
-            <div class="layout-column">
-                <h2 class="section-title">Speed Practice Question</h2>
-                <div style="position: relative; width: 100%;">
-                    <div id="text-container" ondragstart="return false;" ondrop="return false;">Loading passage...</div>
-                    <div class="resize-handle" data-target="text-container"></div>
-                </div>
-            </div>
-
-            <div class="layout-column">
-                <h2 class="section-title">Speed Practice Answer</h2>
-                <div style="position: relative; width: 100%;">
-                    <div id="typing-container" class="typing-container">
-                        <textarea id="hidden-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-gramm="false" data-gramm_editor="false" data-enable-grammarly="false" oncopy="return false;" onpaste="return false;" oncut="return false;" ondrop="return false;" disabled></textarea>
-                        <div id="type-display" class="type-display"><span style="color: #888;">Start typing here...</span></div>
-                    </div>
-                    <div class="resize-handle" data-target="typing-container"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="stats-panel">
+        <div class="stats-panel" style="margin-top: 0; border-top: none; padding-top: 0; margin-bottom: 20px;">
             <div class="stats-header-row">
                 <div class="timer-bubble" id="stat-time">00:00</div>
                 <div>
@@ -433,8 +412,31 @@ body.exam-mode-active:not(.exam-submitted) #exam-sensitive-stats {
             </div>
 
             <div id="exam-stats" style="display: none; border-top: 1px dashed var(--border-color); padding-top: 15px;">
-                <div class="bold-text" style="color: var(--primary-color); font-size: 18px;">Exam Marks: <span id="stat-marks" style="font-size: 22px;">40</span> / 40</div>
-                <div class="bold-text" id="stat-result-container" style="font-size: 18px; margin-top: 5px;">Result: <span id="stat-result" style="font-weight: bold;">-</span></div>
+                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; align-items: center;">
+                    <div class="bold-text" style="color: var(--primary-color); font-size: 18px; margin: 0;">Exam Marks: <span id="stat-marks" style="font-size: 22px;">40</span> / 40</div>
+                    <div class="bold-text" id="stat-result-container" style="font-size: 18px; margin: 0;">Result: <span id="stat-result" style="font-weight: bold;">-</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="workspace-layout">
+            <div class="layout-column">
+                <h2 class="section-title">Speed Practice Question</h2>
+                <div style="position: relative; width: 100%;">
+                    <div id="text-container" ondragstart="return false;" ondrop="return false;">Loading passage...</div>
+                    <div class="resize-handle" data-target="text-container"></div>
+                </div>
+            </div>
+
+            <div class="layout-column">
+                <h2 class="section-title">Speed Practice Answer</h2>
+                <div style="position: relative; width: 100%;">
+                    <div id="typing-container" class="typing-container">
+                        <textarea id="hidden-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-gramm="false" data-gramm_editor="false" data-enable-grammarly="false" oncopy="return false;" onpaste="return false;" oncut="return false;" ondrop="return false;" disabled></textarea>
+                        <div id="type-display" class="type-display"><span style="color: #888;">Start typing here...</span></div>
+                    </div>
+                    <div class="resize-handle" data-target="typing-container"></div>
+                </div>
             </div>
         </div>
     </main>
