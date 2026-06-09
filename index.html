@@ -239,6 +239,23 @@ body {
         transparent 80%, transparent 90%, var(--primary-color) 90%, var(--primary-color) 100%
     );
 }
+.resize-handle.top-handle {
+    top: 2px;
+    bottom: auto;
+    cursor: ne-resize;
+    background-image: linear-gradient(45deg, 
+        transparent 40%, var(--border-color) 40%, var(--border-color) 50%, 
+        transparent 50%, transparent 70%, var(--border-color) 70%, var(--border-color) 80%, 
+        transparent 80%, transparent 90%, var(--border-color) 90%, var(--border-color) 100%
+    );
+}
+.resize-handle.top-handle:hover, .resize-handle.top-handle:active {
+    background-image: linear-gradient(45deg, 
+        transparent 40%, var(--primary-color) 40%, var(--primary-color) 50%, 
+        transparent 50%, transparent 70%, var(--primary-color) 70%, var(--primary-color) 80%, 
+        transparent 80%, transparent 90%, var(--primary-color) 90%, var(--primary-color) 100%
+    );
+}
 
 @media screen and (max-width: 480px) {
     .controls-row { grid-template-columns: repeat(2, 1fr); gap: 8px; padding-bottom: 10px; margin-bottom: 10px; }
@@ -303,6 +320,28 @@ body.exam-mode-active:not(.exam-submitted) #exam-sensitive-stats {
 
 #typing-container .type-display {
     overflow-y: hidden;
+}
+
+/* Exam Mode: Top and Side-by-Side Stats Styling */
+.stats-panel.top-stats-mode {
+    margin-top: 0;
+    border-top: none;
+    padding-top: 0;
+    margin-bottom: 20px;
+}
+@media screen and (max-width: 480px) {
+    .stats-panel.top-stats-mode .stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px;
+    }
+    .stats-panel.top-stats-mode .blue-stat, 
+    .stats-panel.top-stats-mode .green-stat, 
+    .stats-panel.top-stats-mode .red-stat {
+        font-size: 13px !important;
+    }
+    .stats-panel.top-stats-mode .bold-text {
+        font-size: 14px !important;
+    }
 }
 
 </style>
@@ -385,7 +424,30 @@ body.exam-mode-active:not(.exam-submitted) #exam-sensitive-stats {
             ⚠️ Warning: CAPS LOCK is ON!
         </div>
 
-        <div class="stats-panel" style="margin-top: 0; border-top: none; padding-top: 0; margin-bottom: 20px;">
+        <div class="workspace-layout">
+            <div class="layout-column">
+                <h2 class="section-title">Speed Practice Question</h2>
+                <div style="position: relative; width: 100%;">
+                    <div class="resize-handle top-handle" data-target="text-container"></div>
+                    <div id="text-container" ondragstart="return false;" ondrop="return false;">Loading passage...</div>
+                    <div class="resize-handle" data-target="text-container"></div>
+                </div>
+            </div>
+
+            <div class="layout-column">
+                <h2 class="section-title">Speed Practice Answer</h2>
+                <div style="position: relative; width: 100%;">
+                    <div class="resize-handle top-handle" data-target="typing-container"></div>
+                    <div id="typing-container" class="typing-container">
+                        <textarea id="hidden-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-gramm="false" data-gramm_editor="false" data-enable-grammarly="false" oncopy="return false;" onpaste="return false;" oncut="return false;" ondrop="return false;" disabled></textarea>
+                        <div id="type-display" class="type-display"><span style="color: #888;">Start typing here...</span></div>
+                    </div>
+                    <div class="resize-handle" data-target="typing-container"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-panel">
             <div class="stats-header-row">
                 <div class="timer-bubble" id="stat-time">00:00</div>
                 <div>
@@ -412,31 +474,8 @@ body.exam-mode-active:not(.exam-submitted) #exam-sensitive-stats {
             </div>
 
             <div id="exam-stats" style="display: none; border-top: 1px dashed var(--border-color); padding-top: 15px;">
-                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; align-items: center;">
-                    <div class="bold-text" style="color: var(--primary-color); font-size: 18px; margin: 0;">Exam Marks: <span id="stat-marks" style="font-size: 22px;">40</span> / 40</div>
-                    <div class="bold-text" id="stat-result-container" style="font-size: 18px; margin: 0;">Result: <span id="stat-result" style="font-weight: bold;">-</span></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="workspace-layout">
-            <div class="layout-column">
-                <h2 class="section-title">Speed Practice Question</h2>
-                <div style="position: relative; width: 100%;">
-                    <div id="text-container" ondragstart="return false;" ondrop="return false;">Loading passage...</div>
-                    <div class="resize-handle" data-target="text-container"></div>
-                </div>
-            </div>
-
-            <div class="layout-column">
-                <h2 class="section-title">Speed Practice Answer</h2>
-                <div style="position: relative; width: 100%;">
-                    <div id="typing-container" class="typing-container">
-                        <textarea id="hidden-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-gramm="false" data-gramm_editor="false" data-enable-grammarly="false" oncopy="return false;" onpaste="return false;" oncut="return false;" ondrop="return false;" disabled></textarea>
-                        <div id="type-display" class="type-display"><span style="color: #888;">Start typing here...</span></div>
-                    </div>
-                    <div class="resize-handle" data-target="typing-container"></div>
-                </div>
+                <div class="bold-text" style="color: var(--primary-color); font-size: 18px;">Exam Marks: <span id="stat-marks" style="font-size: 22px;">40</span> / 40</div>
+                <div class="bold-text" id="stat-result-container" style="font-size: 18px; margin-top: 5px;">Result: <span id="stat-result" style="font-weight: bold;">-</span></div>
             </div>
         </div>
     </main>
@@ -1300,13 +1339,27 @@ function toggleExamMode() {
     try {
         const examStats = document.getElementById("exam-stats");
         const submitBtn = document.getElementById("submit-exam-btn");
+        const statsPanel = document.querySelector(".stats-panel");
+        const workspaceLayout = document.querySelector(".workspace-layout");
 
         if (examSelect.value === "On") {
             document.body.classList.add("exam-mode-active");
             if (examStats) examStats.style.display = isExamSubmitted ? "block" : "none";
+            
+            // Move stats to top and format side-by-side
+            if (statsPanel && workspaceLayout) {
+                workspaceLayout.parentNode.insertBefore(statsPanel, workspaceLayout);
+                statsPanel.classList.add("top-stats-mode");
+            }
         } else {
             document.body.classList.remove("exam-mode-active");
             if (examStats) examStats.style.display = "none";
+            
+            // Move stats back to bottom
+            if (statsPanel && workspaceLayout) {
+                workspaceLayout.parentNode.appendChild(statsPanel);
+                statsPanel.classList.remove("top-stats-mode");
+            }
         }
 
         if (submitBtn) {
@@ -1950,12 +2003,13 @@ document.addEventListener("DOMContentLoaded", function() {
             var startY, startHeight;
             var targetId = handle.getAttribute('data-target');
             var target = targetId === 'typing-container' ? (document.getElementById('typing-container') || document.querySelector('.typing-container')) : document.getElementById(targetId);
+            var isTopHandle = handle.classList.contains('top-handle');
 
             function onStart(e) {
                 isDragging = true;
                 startY = e.touches ? e.touches[0].clientY : e.clientY;
                 startHeight = target.clientHeight;
-                document.body.style.cursor = 'se-resize';
+                document.body.style.cursor = isTopHandle ? 'ne-resize' : 'se-resize';
                 document.body.style.userSelect = 'none';
                 
                 // Attach listeners ONLY when dragging starts (Fixes Memory Leak)
@@ -1970,7 +2024,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (e.cancelable) e.preventDefault(); 
                 var currentY = e.touches ? e.touches[0].clientY : e.clientY;
                 var dy = currentY - startY;
-                var newHeight = Math.max(100, Math.min(600, startHeight + dy));
+                var newHeight = Math.max(100, Math.min(600, startHeight + (isTopHandle ? -dy : dy)));
                 
                 var textCont = document.getElementById('text-container');
                 var typeCont = document.querySelector('.typing-container');
