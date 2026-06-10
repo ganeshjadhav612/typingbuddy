@@ -763,7 +763,7 @@ const statAccuracy = document.getElementById("stat-accuracy");
 
 function getTypedWordsClean(text) {
     if (!text) return [];
-    return text.split(' ').filter((word, index, arr) => {
+    return text.replace(/\u200C/g, "").split(' ').filter((word, index, arr) => {
         if (word === "" && index === arr.length - 1) return true;
         return word !== "";
     });
@@ -1238,6 +1238,9 @@ function handleRemingtonKeystroke(textarea, incomingChar) {
         if (pendingPrebaseWelanti && incomingChar !== "ि") {
             if (leftText.endsWith("ि")) {
                 leftText = leftText.slice(0, -1);
+                if (leftText.endsWith("\u200C")) {
+                    leftText = leftText.slice(0, -1);
+                }
             }
             if (incomingChar === "ा") {
                 if (leftText.endsWith("्")) {
@@ -1262,6 +1265,9 @@ function handleRemingtonKeystroke(textarea, incomingChar) {
 
         if (incomingChar === "्" && leftText.endsWith("ि")) {
             leftText = leftText.slice(0, -1);
+            if (leftText.endsWith("\u200C")) {
+                leftText = leftText.slice(0, -1);
+            }
             leftText += "्" + "ि";
             pendingPrebaseWelanti = "ि";
             textarea.value = leftText + rightText;
@@ -1270,10 +1276,14 @@ function handleRemingtonKeystroke(textarea, incomingChar) {
         }
 
         const duplicateBlockers = [
-            "ा","ि","ी","ु","ू","ृ","े","ै","ो","ौ","ं","ः","्"
+            "ा","ी","ु","ू","ृ","े","ै","ो","ौ","ं","ः","्"
         ];
 
         if (duplicateBlockers.includes(incomingChar) && leftText.endsWith(incomingChar)) {
+            return;
+        }
+
+        if (incomingChar === "ि" && pendingPrebaseWelanti === "ि") {
             return;
         }
 
@@ -1307,7 +1317,11 @@ function handleRemingtonKeystroke(textarea, incomingChar) {
 
         if (incomingChar === "ि") {
             pendingPrebaseWelanti = "ि";
-            leftText += incomingChar;
+            if (leftText.length > 0 && !leftText.endsWith(" ") && !leftText.endsWith("\n")) {
+                leftText += "\u200C" + incomingChar;
+            } else {
+                leftText += incomingChar;
+            }
             textarea.value = leftText + rightText;
             textarea.selectionStart = textarea.selectionEnd = leftText.length;
             return;
@@ -1316,6 +1330,9 @@ function handleRemingtonKeystroke(textarea, incomingChar) {
         if (incomingChar === "ा") {
             if (leftText.endsWith("ि")) {
                 let tempLeft = leftText.slice(0, -1);
+                if (tempLeft.endsWith("\u200C")) {
+                    tempLeft = tempLeft.slice(0, -1);
+                }
                 if (tempLeft.endsWith("्")) {
                     tempLeft = tempLeft.slice(0, -1);
                 }
